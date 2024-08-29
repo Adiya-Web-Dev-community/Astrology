@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "echo 'No build step defined'"
+    "build": "dist "
   },
   "keywords": [],
   "author": "",
