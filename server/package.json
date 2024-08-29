@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "dist"
+    "build": "npm install"
   },
   "keywords": [],
   "author": "",
