@@ -24,4 +24,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
+app.get("/", async (req, res) => {
+  res.send("ASTROLOGY APP");
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
