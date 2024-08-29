@@ -4,16 +4,15 @@ const config = require("../config/config");
 
 exports.sendEmail = async (to, subject, html) => {
   const transporter = nodemailer.createTransport({
-    host: config.SMTP_HOST,
-    port: config.SMTP_PORT,
+    service: "gmail",
     auth: {
-      user: config.SMTP_USER,
-      pass: config.SMTP_PASS,
+      user: config.NODEMAILER_EMAIL,
+      pass: config.NODEMAILER_PASSWORD,
     },
   });
 
   await transporter.sendMail({
-    from: config.FROM_EMAIL,
+    from: config.NODEMAILER_EMAIL,
     to,
     subject,
     html,
