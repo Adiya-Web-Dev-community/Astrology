@@ -125,7 +125,7 @@ exports.register = async (req, res) => {
       password,
       firstName,
       lastName,
-      role,
+      role: "admin",
       phoneNumber,
     });
 
@@ -200,12 +200,16 @@ exports.verifyOTP = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid or expired OTP" });
     }
+    // Generate a token for the user
+    const token = jwt.sign({ userId: user._id }, process.env.RESET_SECRET, {
+      expiresIn: "10m",
+    });
     user.isVerified = true;
     user.otp = undefined;
     await user.save();
     res
       .status(200)
-      .json({ success: true, message: "Account verified successfully" });
+      .json({ success: true, message: "Account verified successfully", token });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }

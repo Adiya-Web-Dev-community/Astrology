@@ -7,4 +7,5 @@ module.exports = {
   JWT_EXPIRE: process.env.JWT_EXPIRE || "30d",
   NODEMAILER_EMAIL: process.env.NODEMAILER_EMAIL,
   NODEMAILER_PASSWORD: process.env.NODEMAILER_PASSWORD,
+  RESET_SECRET: process.env.RESET_SECRET,
 };

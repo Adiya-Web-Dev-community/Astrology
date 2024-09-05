@@ -1,6 +1,8 @@
 const express = require("express");
 const connectDB = require("./config/dbConnection.js");
 const userRoutes = require("./routes/userRoutes.js");
+const categoryRoutes = require("./routes/categoryRoutes.js");
+const blogRoutes = require("./routes/blogRoutes.js");
 const cors = require("cors");
 
 const app = express();
@@ -14,7 +16,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use("/api/blogs", blogRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
