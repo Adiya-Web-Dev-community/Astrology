@@ -1,6 +1,6 @@
 import { useMemo, useRef } from "react";
 import JoditEditor from "jodit-react";
-import uploadImage from "@/firebase/image";
+import uploadImage from "@/firebase/multipleImag";
 import uploadVideo from "@/firebase/video";
 interface Props {
   value: string;
@@ -34,19 +34,19 @@ const NewEditor = ({ value, OnChangeEditor }: Props) => {
               `<form class="space-y-4 p-2">
        <div class="flex flex-col">
          <label class="text-sm font-medium text-gray-200">Video URL</label>
-         <input type="text" 
-                placeholder="https://" 
+         <input type="text"
+                placeholder="https://"
                 class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
-                <span class="text-xs text-gray-200 font-semibold mt-1">Youtube, Vimeo, Dailymotion, Facebook url accepted</span> 
+                <span class="text-xs text-gray-200 font-semibold mt-1">Youtube, Vimeo, Dailymotion, Facebook url accepted</span>
        </div>
        <div class="flex flex-col">
          <label class="text-sm font-medium text-gray-200">Alternative text</label>
-         <input type="text" 
-                placeholder="Alternative text" 
+         <input type="text"
+                placeholder="Alternative text"
                 class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
        </div>
        <div class="flex justify-end">
-         <button type="submit" 
+         <button type="submit"
                  class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200">
            Insert Video
          </button>
@@ -112,18 +112,18 @@ const NewEditor = ({ value, OnChangeEditor }: Props) => {
               `<form class="space-y-4 p-2">
        <div class="flex flex-col">
          <label class="text-sm font-medium text-gray-200">Image URL</label>
-         <input type="text" 
-                placeholder="https://exp.com/img.png" 
+         <input type="text"
+                placeholder="https://exp.com/img.png"
                 class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
        </div>
        <div class="flex flex-col">
          <label class="text-sm font-medium text-gray-200">Alternative text</label>
-         <input type="text" 
-                placeholder="Alternative text" 
+         <input type="text"
+                placeholder="Alternative text"
                 class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
        </div>
        <div class="flex justify-end">
-         <button type="submit" 
+         <button type="submit"
                  class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200">
            Insert Image
          </button>
@@ -200,3 +200,4 @@ const NewEditor = ({ value, OnChangeEditor }: Props) => {
 };
 
 export default NewEditor;
+//===============================================

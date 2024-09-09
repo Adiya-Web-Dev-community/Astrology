@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,12 +28,12 @@ import { Layout } from "../custom/layout";
 import { Search } from "../search";
 import ThemeSwitch from "../theme-switch";
 import { UserNav } from "../user-nav";
+import uploadImage from "@/firebase/image";
 
 // Define the form schema
 const formSchema = z.object({
   title: z.string().min(2, { message: "Title must be at least 2 characters." }),
-  thumbnail: z.string().url({ message: "Must be a valid URL." }),
-  content: z.string().min(1, { message: "Content is required." }),
+  content: z.string().optional(),
   categoryId: z.string().nonempty({ message: "Category is required." }),
   excerpt: z.string().optional(),
   metaDescription: z.string().optional(),
@@ -44,12 +43,13 @@ const formSchema = z.object({
 const AddBlog = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      thumbnail: "",
       content: "",
       categoryId: "",
       excerpt: "",
@@ -74,14 +74,39 @@ const AddBlog = () => {
     },
   });
 
+  const handleFileChange = (event) => {
+    setThumbnailFile(event.target.files[0]);
+  };
+
   const onSubmit = async (data) => {
-    data.keywords = data.keywords.split(",").map((keyword) => keyword.trim());
-    createBlogMutation.mutate(data);
+    try {
+      let thumbnailUrl = "";
+      if (thumbnailFile) {
+        thumbnailUrl = await uploadImage(
+          "blogThumbnails",
+          thumbnailFile,
+          setUploadProgress
+        );
+      }
+      data.thumbnail = thumbnailUrl;
+      data.keywords = data.keywords.split(",").map((keyword) => keyword.trim());
+      createBlogMutation.mutate(data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
 
   return (
     <Layout>
       <Layout.Header className="border border-b">
+        <Button
+          variant="outline"
+          onClick={() => window.history.back()}
+          className="ml-4"
+        >
+          Back
+        </Button>
         <div className="ml-auto flex items-center space-x-4">
           <Search />
           <ThemeSwitch />
@@ -110,19 +135,18 @@ const AddBlog = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="thumbnail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Thumbnail URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Thumbnail URL" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormItem>
+                <FormLabel>Thumbnail</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                  />
+                </FormControl>
+                {uploadProgress && <p>Upload progress: {uploadProgress}%</p>}
+                <FormMessage />
+              </FormItem>
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -130,14 +154,26 @@ const AddBlog = () => {
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <select {...field}>
-                        <option value="">Select Category</option>
-                        {categories?.map((category) => (
-                          <option key={category._id} value={category._id}>
-                            {category.name}
-                          </option>
-                        ))}
-                      </select>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {categories?.map((category) => (
+                              <SelectItem
+                                key={category._id}
+                                value={category._id}
+                              >
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,7 +188,7 @@ const AddBlog = () => {
                     <FormControl>
                       <NewEditor
                         value={field.value}
-                        onChange={field.onChange}
+                        OnChangeEditor={(content) => field.onChange(content)}
                       />
                     </FormControl>
                     <FormMessage />

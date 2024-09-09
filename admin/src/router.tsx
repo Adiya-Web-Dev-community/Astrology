@@ -145,6 +145,14 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "astrologers",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/astrologer/astrologer.tsx")
+              ).default,
+            }),
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default,

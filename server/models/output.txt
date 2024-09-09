@@ -1,3 +1,60 @@
+﻿=======================================================================
+C:\ABS\Projects\Astrology\server\models\blogModel.js
+
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
+const BlogSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
+    thumbnail: { type: String, required: true },
+    content: { type: String, required: true },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    }, // Reference to Category
+    excerpt: { type: String },
+    metaDescription: { type: String },
+    keywords: [{ type: String }],
+  },
+  { timestamps: true }
+);
+
+const Blog = mongoose.model("Blog", BlogSchema);
+
+module.exports = Blog;
+
+
+=======================================================================
+C:\ABS\Projects\Astrology\server\models\categoryModel.js
+
+const mongoose = require("mongoose");
+
+const categorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    image: String,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Category = mongoose.model("Category", categorySchema);
+
+module.exports = Category;
+
+
+=======================================================================
+C:\ABS\Projects\Astrology\server\models\userModel.js
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -28,7 +85,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["customer", "admin", "astrologer"],
+      enum: ["customer", "admin"],
       default: "customer",
     },
     firstName: {
@@ -69,3 +126,5 @@ UserSchema.methods.getSignedJwtToken = function () {
 };
 
 module.exports = mongoose.model("User", UserSchema);
+
+

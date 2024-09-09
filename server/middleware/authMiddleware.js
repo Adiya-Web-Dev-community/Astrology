@@ -5,6 +5,7 @@ const config = require("../config/config");
 
 exports.protect = async (req, res, next) => {
   let token;
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -19,6 +20,9 @@ exports.protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET);
     req.user = await User.findById(decoded.id);
+    console.log(decoded);
+    console.log(req.user);
+
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -35,6 +39,8 @@ exports.protect = async (req, res, next) => {
 
 exports.authorize = (...roles) => {
   return (req, res, next) => {
+    console.log(req.user.role);
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,

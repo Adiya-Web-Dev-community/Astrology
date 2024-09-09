@@ -3,6 +3,7 @@ const connectDB = require("./config/dbConnection.js");
 const userRoutes = require("./routes/userRoutes.js");
 const categoryRoutes = require("./routes/categoryRoutes.js");
 const blogRoutes = require("./routes/blogRoutes.js");
+const astrologerRoutes = require("./routes/astrologerRoutes.js");
 const cors = require("cors");
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/api/blogs", blogRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/astrologers", astrologerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

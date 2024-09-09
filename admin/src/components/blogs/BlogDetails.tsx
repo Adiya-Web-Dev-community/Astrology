@@ -14,6 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Layout } from "../custom/layout";
 import Loader from "../loader";
+import { Search } from "../search";
+import ThemeSwitch from "../theme-switch";
+import { UserNav } from "../user-nav";
 
 // Define the BlogDetails component
 const BlogDetails = () => {
@@ -37,18 +40,37 @@ const BlogDetails = () => {
         <Button
           variant="outline"
           onClick={() => window.history.back()}
-          className="ml-4 mt-4"
+          className="ml-4"
         >
           Back
         </Button>
+        <div className="ml-auto flex items-center space-x-4">
+          <Search />
+          <ThemeSwitch />
+          <UserNav />
+        </div>
       </Layout.Header>
       <Layout.Body>
         <div className="container mx-auto p-4">
           <div>
-            <div>
-              <div>{blog.title}</div>
-              <div>{blog.category.name}</div>
+            <div className="mb-4">
+              <div className="text-lg font-semibold">{blog.title}</div>
+              <div className="text-gray-500"> - {blog?.category?.name}</div>
+              <div className="mt-4">
+                <p>
+                  <strong>Tags:</strong>{" "}
+                  {blog.keywords.map((keyword, index) => (
+                    <Badge variant="outline" key={index} className="mr-2">
+                      {keyword}
+                    </Badge>
+                  ))}
+                </p>
+              </div>
             </div>
+            <Separator className="my-4" />
+            <p className="mb-4">
+              <strong>Excerpt:</strong> {blog.excerpt}
+            </p>
             <div>
               <div className="mb-4">
                 <img
@@ -59,25 +81,22 @@ const BlogDetails = () => {
               </div>
               <Separator className="my-4" />
               <div
-                className="text-lg"
+                className="text-lg space-y-4"
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
               <Separator className="my-4" />
               <div className="text-sm text-gray-500">
                 <p>
-                  <strong>Excerpt:</strong> {blog.excerpt}
-                </p>
-                <p>
                   <strong>Meta Description:</strong> {blog.metaDescription}
                 </p>
-                <p>
+                {/* <p>
                   <strong>Keywords:</strong>{" "}
                   {blog.keywords.map((keyword, index) => (
                     <Badge variant="outline" key={index} className="mr-2">
                       {keyword}
                     </Badge>
                   ))}
-                </p>
+                </p> */}
               </div>
             </div>
           </div>

@@ -260,6 +260,51 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// exports.getAllUser = async (req, res) => {
+//   try {
+//     const user = await User.find({
+//       role:"customer"
+//     });
+
+//     res.status(200).json({ success: true, data:  user });
+//   } catch (error) {
+//     res.status(400).json({ success: false, error: error.message });
+//   }
+// };
+
+exports.getAllUser = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    // Convert page and limit to numbers and calculate the skip value
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Fetch users with pagination
+    const users = await User.find({ role: "customer" })
+      .skip(skip)
+      .limit(limitNumber);
+
+    // Get the total count of users for pagination metadata
+    const totalUsers = await User.countDocuments({ role: "customer" });
+
+    // Respond with data and pagination info
+    res.status(200).json({
+      success: true,
+      data: users,
+      pagination: {
+        totalUsers,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalUsers / limitNumber),
+        limit: limitNumber,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
 exports.updateProfile = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.user.id, req.body, {

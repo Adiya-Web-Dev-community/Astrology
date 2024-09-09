@@ -174,6 +174,12 @@ export const sidelinks: SideLink[] = [
     icon: <IconUsers size={18} />,
   },
   {
+    title: "Astrologer's",
+    label: "",
+    href: "/astrologers",
+    icon: <IconUsers size={18} />,
+  },
+  {
     title: "Astrologer's Categories",
     label: "",
     href: "/categories",
