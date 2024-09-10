@@ -76,10 +76,10 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-UserSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id, role: this.role }, config.JWT_SECRET, {
-    expiresIn: config.JWT_EXPIRE,
-  });
+UserSchema.methods.getSignedJwtToken = function (options = {}) {
+  const { expiresIn = config.JWT_EXPIRE, secret = config.JWT_SECRET } = options;
+
+  return jwt.sign({ id: this._id, role: this.role }, secret, { expiresIn });
 };
 
 module.exports = mongoose.model("User", UserSchema);

@@ -201,8 +201,13 @@ exports.verifyOTP = async (req, res) => {
         .json({ success: false, message: "Invalid or expired OTP" });
     }
     // Generate a token for the user
-    const token = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
+    // const token = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
+    //   expiresIn: "10m",
+    // });
+
+    const token = user.getSignedJwtToken({
       expiresIn: "10m",
+      secret: process.env.JWT_SECRET,
     });
     user.isVerified = true;
     user.otp = undefined;
@@ -417,8 +422,13 @@ exports.forgotPassword = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const resetToken = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
+    // const resetToken = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
+    //   expiresIn: "1h",
+    // });
+
+    const resetToken = user.getSignedJwtToken({
       expiresIn: "1h",
+      secret: process.env.RESET_SECRET,
     });
     const resetLink = `http://localhost:5173/auth/reset-password?token=${resetToken}`; // Replace with your frontend URL
 
