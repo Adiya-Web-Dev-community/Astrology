@@ -37,7 +37,21 @@ const UserSchema = new mongoose.Schema(
     lastName: {
       type: String,
     },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+    maritalSatus: String,
+    dateOfBirth: Date,
+    timeOfBirth: Date,
     phoneNumber: String,
+    profilePic: String,
+    address: {
+      city: String,
+      pinCode: Number,
+      location: String,
+      State: String,
+    },
     isVerified: {
       type: Boolean,
       default: false,

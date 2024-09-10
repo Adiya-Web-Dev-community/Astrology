@@ -36,14 +36,12 @@ const AstrologerSchema = new Schema(
       type: String,
       required: [true, "Please provide a short biography"],
     },
+    experienceAndQualification: {
+      type: String,
+      required: [true, "Please provide a Experience And Qualification"],
+    },
     profileImage: {
       type: String,
-    },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: 0,
     },
     isAvailable: {
       type: Boolean,

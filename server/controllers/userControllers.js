@@ -311,24 +311,8 @@ exports.updateProfile = async (req, res) => {
       new: true,
       runValidators: true,
     });
-    let profile;
-    if (user.role === "customer") {
-      profile = await Customer.findOneAndUpdate({ user: user._id }, req.body, {
-        new: true,
-        runValidators: true,
-      });
-    } else if (user.role === "supplier") {
-      profile = await Supplier.findOneAndUpdate({ user: user._id }, req.body, {
-        new: true,
-        runValidators: true,
-      });
-    } else if (user.role === "admin") {
-      profile = await Admin.findOneAndUpdate({ user: user._id }, req.body, {
-        new: true,
-        runValidators: true,
-      });
-    }
-    res.status(200).json({ success: true, data: { user, profile } });
+
+    res.status(200).json({ success: true, data: { user } });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }

@@ -466,6 +466,15 @@ import axiosInstance from "@/api/client";
 import { Input } from "@/components/ui/input"; // Importing the Input component
 import { setCategories } from "@/store/features/category/categorySlice";
 import uploadImage from "@/firebase/image";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const CategoryManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -626,6 +635,31 @@ const CategoryManagement = () => {
               ))}
             </TableBody>
           </Table>
+
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">2</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">3</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
 
           {/* Dialog for Creating/Updating a Category */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

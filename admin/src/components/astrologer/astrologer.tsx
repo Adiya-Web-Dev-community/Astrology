@@ -131,6 +131,11 @@ const AstrologerManagement = () => {
       queryClient.invalidateQueries(["astrologers"]);
       setDialogOpen(false);
     },
+    onError: (error) => {
+      // Handle error
+      console.error("Error updating astrologer:", error);
+      alert("Failed to update astrologer. Please try again.");
+    },
   });
 
   const deleteMutation = useMutation({
@@ -149,7 +154,11 @@ const AstrologerManagement = () => {
 
   const toggleAvailabilityMutation = useMutation({
     mutationFn: (id) =>
-      axiosInstance.put(`/astrologers/${id}/toggle-availability`),
+      axiosInstance.put(`/astrologers/${id}/toggle-availability`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
     onSuccess: (data) => {
       dispatch(updateAstrologer(data));
       queryClient.invalidateQueries(["astrologers"]);
@@ -181,11 +190,13 @@ const AstrologerManagement = () => {
   };
 
   const handleEditClick = (astrologer) => {
+    console.log("Astrologer", astrologer);
+
     setCurrentAstrologer(astrologer);
-    // form.reset({
-    //   ...astrologer,
-    //   specialties: astrologer.specialties.map((s) => s._id),
-    // });
+    form.reset({
+      ...astrologer,
+      specialties: astrologer.specialties.map((s) => s._id),
+    });
     setIsEditing(true);
     setDialogOpen(true);
   };
