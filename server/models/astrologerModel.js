@@ -56,6 +56,7 @@ const AstrologerSchema = new Schema(
       ref: "User",
       // required: true,
     },
+    language: [String],
   },
   { timestamps: true }
 );

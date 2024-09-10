@@ -201,7 +201,7 @@ exports.verifyOTP = async (req, res) => {
         .json({ success: false, message: "Invalid or expired OTP" });
     }
     // Generate a token for the user
-    const token = jwt.sign({ userId: user._id }, process.env.RESET_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
       expiresIn: "10m",
     });
     user.isVerified = true;
