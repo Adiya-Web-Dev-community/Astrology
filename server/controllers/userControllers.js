@@ -307,6 +307,8 @@ exports.getAllUser = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
+    console.log(req.user.id);
+
     const user = await User.findByIdAndUpdate(req.user.id, req.body, {
       new: true,
       runValidators: true,
