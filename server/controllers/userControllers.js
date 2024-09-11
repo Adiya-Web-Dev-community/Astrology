@@ -206,7 +206,7 @@ exports.verifyOTP = async (req, res) => {
     // });
 
     const token = user.getSignedJwtToken({
-      expiresIn: "10m",
+      expiresIn: "30d",
       secret: process.env.JWT_SECRET,
     });
     user.isVerified = true;

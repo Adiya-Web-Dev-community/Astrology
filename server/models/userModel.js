@@ -46,6 +46,12 @@ const UserSchema = new mongoose.Schema(
     timeOfBirth: Date,
     phoneNumber: String,
     profilePic: String,
+    favoriteAstrologer: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Astrologer",
+      },
+    ],
     address: {
       city: String,
       pinCode: Number,
@@ -77,7 +83,7 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 UserSchema.methods.getSignedJwtToken = function (options = {}) {
-  const { expiresIn = config.JWT_EXPIRE, secret = config.JWT_SECRET } = options;
+  const { expiresIn, secret } = options;
 
   return jwt.sign({ id: this._id, role: this.role }, secret, { expiresIn });
 };

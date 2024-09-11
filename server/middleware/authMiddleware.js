@@ -24,7 +24,12 @@ exports.protect = async (req, res, next) => {
     console.log(token);
 
     const decoded = jwt.verify(token, config.JWT_SECRET);
-    console.log(decoded);
+    // console.log(decoded);
+    // console.log("Token issued at:", new Date(decoded.iat * 1000).toISOString());
+    // console.log(
+    //   "Token expires at:",
+    //   new Date(decoded.exp * 1000).toISOString()
+    // );
     req.user = await User.findById(decoded.id);
     console.log(req.user);
 
