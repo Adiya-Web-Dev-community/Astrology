@@ -68,7 +68,13 @@ exports.getFavoriteAstrologers = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await User.findById(userId).populate("favoriteAstrologer");
+    const user = await User.findById(userId).populate({
+      path: "favoriteAstrologer",
+      populate: {
+        path: "specialties",
+        model: "Category",
+      },
+    });
 
     if (!user) {
       return res
