@@ -22,6 +22,7 @@ import {
   IconUsers,
   IconLock,
 } from "@tabler/icons-react";
+import { BoxIcon } from "lucide-react";
 
 export interface NavLink {
   title: string;
@@ -184,6 +185,12 @@ export const sidelinks: SideLink[] = [
     label: "",
     href: "/categories",
     icon: <IconUsers size={18} />,
+  },
+  {
+    title: "Free Services",
+    label: "",
+    href: "/free-services",
+    icon: <BoxIcon size={18} />,
   },
   {
     title: "Blogs",

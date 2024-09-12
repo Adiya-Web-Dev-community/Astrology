@@ -38,16 +38,12 @@ exports.createOrUpdateHoroscope = async (req, res) => {
     if (horoscope) {
       // Update the existing horoscope
       horoscope.daily = {
-        ...horoscope.daily,
-        date: formattedDate,
         description: daily?.description || horoscope.daily.description,
         luckyColor: daily?.luckyColor || horoscope.daily.luckyColor,
         luckyNumber: daily?.luckyNumber || horoscope.daily.luckyNumber,
       };
 
       horoscope.monthly = {
-        ...horoscope.monthly,
-        month: currentMonth,
         description: monthly?.description || horoscope.monthly.description,
         career: monthly?.career || horoscope.monthly.career,
         love: monthly?.love || horoscope.monthly.love,
@@ -56,8 +52,6 @@ exports.createOrUpdateHoroscope = async (req, res) => {
       };
 
       horoscope.yearly = {
-        ...horoscope.yearly,
-        year: currentYear,
         description: yearly?.description || horoscope.yearly.description,
         career: yearly?.career || horoscope.yearly.career,
         love: yearly?.love || horoscope.yearly.love,
@@ -66,19 +60,36 @@ exports.createOrUpdateHoroscope = async (req, res) => {
       };
 
       await horoscope.save();
-      res.json({ message: "Horoscope updated successfully", horoscope });
+
+      // Return response with date
+      res.json({
+        message: "Horoscope updated successfully",
+        horoscope: {
+          zodiacSign: horoscope.zodiacSign,
+          daily: {
+            date: formattedDate,
+            ...horoscope.daily,
+          },
+          monthly: {
+            month: currentMonth,
+            ...horoscope.monthly,
+          },
+          yearly: {
+            year: currentYear,
+            ...horoscope.yearly,
+          },
+        },
+      });
     } else {
       // Create new horoscope entry
       horoscope = new Horoscope({
         zodiacSign,
         daily: {
-          date: formattedDate,
           description: daily?.description,
           luckyColor: daily?.luckyColor,
           luckyNumber: daily?.luckyNumber,
         },
         monthly: {
-          month: currentMonth,
           description: monthly?.description,
           career: monthly?.career,
           love: monthly?.love,
@@ -86,7 +97,6 @@ exports.createOrUpdateHoroscope = async (req, res) => {
           money: monthly?.money,
         },
         yearly: {
-          year: currentYear,
           description: yearly?.description,
           career: yearly?.career,
           love: yearly?.love,
@@ -96,7 +106,26 @@ exports.createOrUpdateHoroscope = async (req, res) => {
       });
 
       await horoscope.save();
-      res.json({ message: "Horoscope created successfully", horoscope });
+
+      // Return response with date
+      res.json({
+        message: "Horoscope created successfully",
+        horoscope: {
+          zodiacSign: horoscope.zodiacSign,
+          daily: {
+            date: formattedDate,
+            ...horoscope.daily,
+          },
+          monthly: {
+            month: currentMonth,
+            ...horoscope.monthly,
+          },
+          yearly: {
+            year: currentYear,
+            ...horoscope.yearly,
+          },
+        },
+      });
     }
   } catch (error) {
     console.error(error);
@@ -107,7 +136,7 @@ exports.createOrUpdateHoroscope = async (req, res) => {
 // Get All Horoscopes
 exports.getAllHoroscopes = async (req, res) => {
   try {
-    const horoscopes = await Horoscope.find();
+    const horoscopes = await Horoscope.find().select("zodiacSign zodiacImage");
     res.json(horoscopes);
   } catch (error) {
     console.error(error);

@@ -20,6 +20,7 @@ const horoscopeSchema = new mongoose.Schema(
         "pisces",
       ],
     },
+    zodiacImage: String,
     daily: {
       date: { type: String },
       description: { type: String },

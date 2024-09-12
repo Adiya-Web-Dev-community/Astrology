@@ -169,6 +169,84 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "free-services",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/freeServices/ListOfFreeServices.tsx")
+              ).default,
+            }),
+          },
+          {
+            path: "free-services/horoscope",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/horoscope/ListOfHoroscope.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "free-services/horoscope/:zodiacSign",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/horoscope/horoscopeZodiacDetails.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/free-services/vrat-and-upvaas",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/VratandUpvaas/VratandUpvaas.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/free-services/shubh-muhurat",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/ShubhMuhurat/ShubhMuhura.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/free-services/kundali-match",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/KundaliMatch/KundaliMatch.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/free-services/janam-kundali",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/JanamKundali/JanamKundali.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/free-services/todays-panchang",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/freeServices/Panchang/TodaysPanchang.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default,
