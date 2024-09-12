@@ -6,6 +6,7 @@ const blogRoutes = require("./routes/blogRoutes.js");
 const astrologerRoutes = require("./routes/astrologerRoutes.js");
 const reviewRoutes = require("./routes/reviewRoutes.js");
 const favoriteAstrologerRoutes = require("./routes/favoriteAstrologerRoutes");
+const horoscopeRoutes = require("./routes/FreeServices/HoroscopeRoutes.js");
 const cors = require("cors");
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/astrologers", astrologerRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/favoriteAstrologer", favoriteAstrologerRoutes);
+app.use("/api/free-services", horoscopeRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

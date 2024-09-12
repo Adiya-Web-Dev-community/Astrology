@@ -1,5 +1,6 @@
 const Review = require("../models/reviewSchema");
 const Astrologer = require("../models/astrologerModel");
+const { default: mongoose } = require("mongoose");
 
 // Create a new review
 exports.createReview = async (req, res) => {
@@ -45,7 +46,10 @@ exports.getAstrologerReviews = async (req, res) => {
   try {
     const { astrologerId } = req.params;
     const reviews = await Review.find({ astrologer: astrologerId })
-      .populate("user", "name")
+      .populate({
+        path: "user", // Path to the field to be populated
+        select: "firstName lastName email profilePic", // Select specific fields to return
+      })
       .sort({ createdAt: -1 });
     res.status(200).json(reviews);
   } catch (error) {
@@ -118,7 +122,7 @@ exports.getAstrologerAverageRating = async (req, res) => {
   try {
     const { astrologerId } = req.params;
     const result = await Review.aggregate([
-      { $match: { astrologer: mongoose.Types.ObjectId(astrologerId) } },
+      { $match: { astrologer: new mongoose.Types.ObjectId(astrologerId) } },
       {
         $group: {
           _id: null,

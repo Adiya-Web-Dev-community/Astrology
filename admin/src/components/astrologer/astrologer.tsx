@@ -53,8 +53,11 @@ import { Search } from "../search";
 import ThemeSwitch from "../theme-switch";
 import { UserNav } from "../user-nav";
 import AstrologerForm from "./astrologerForm";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AstrologerManagement = () => {
+  const navigate = useNavigate();
   const { token } = useAuth();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -220,6 +223,10 @@ const AstrologerManagement = () => {
     setDialogOpen(true);
   };
 
+  const handleView = (astrologer) => {
+    navigate(`/astrologer/${astrologer._id}`);
+  };
+
   const handlePageChange = (page) => {
     dispatch(setCurrentPage(page));
     queryClient.invalidateQueries(["astrologers", page]);
@@ -302,19 +309,27 @@ const AstrologerManagement = () => {
                         </TableCell>
                         <TableCell>
                           <Button
+                            variant="outline"
+                            onClick={() => handleView(astrologer)}
+                            className="mr-2"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
                             onClick={() => handleEditClick(astrologer)}
                             className="mr-2"
                           >
-                            Edit
+                            <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="destructive"
+                            variant="outline"
                             onClick={() => {
                               setCurrentAstrologer(astrologer);
                               setAlertDialogOpen(true);
                             }}
                           >
-                            Delete
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>

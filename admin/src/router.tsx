@@ -153,6 +153,22 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "astrologer/:id",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/astrologer/astrologerDetails.tsx")
+              ).default,
+            }),
+          },
+          {
+            path: "astrologer/:id/reviews",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/astrologer/ReviewsPage.tsx")
+              ).default,
+            }),
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default,
