@@ -43,6 +43,10 @@ const horoscopeSchema = new mongoose.Schema(
       health: { type: String },
       money: { type: String },
     },
+    dateRange: {
+      start: { type: Date },
+      end: { type: Date },
+    },
   },
   { timestamps: true }
 );

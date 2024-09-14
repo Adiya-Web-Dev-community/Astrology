@@ -6,6 +6,7 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 router.post("/", protect, reviewController.createReview);
 
 router.get("/astrologer/:astrologerId", reviewController.getAstrologerReviews);
+router.get("/astrologers/reviews", reviewController.getAllReviews);
 
 router.put("/:reviewId", protect, reviewController.updateReview);
 

@@ -42,6 +42,23 @@ exports.createReview = async (req, res) => {
 };
 
 // Get all reviews for an astrologer
+exports.getAllReviews = async (req, res) => {
+  try {
+    const { astrologerId } = req.params;
+    const reviews = await Review.find()
+      .populate({
+        path: "user", // Path to the field to be populated
+        select: "firstName lastName email profilePic", // Select specific fields to return
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json(reviews);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching reviews", error: error.message });
+  }
+};
+// Get all reviews for an astrologer
 exports.getAstrologerReviews = async (req, res) => {
   try {
     const { astrologerId } = req.params;

@@ -179,7 +179,10 @@ exports.login = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = user.getSignedJwtToken();
+    const token = user.getSignedJwtToken({
+      expiresIn: "30d",
+      secret: process.env.JWT_SECRET,
+    });
     res.status(200).json({ success: true, token });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });

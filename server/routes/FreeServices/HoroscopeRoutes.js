@@ -9,7 +9,7 @@ const {
 const { protect } = require("../../middleware/authMiddleware");
 
 // Create or Update Horoscope
-router.post("/horoscope", protect, createOrUpdateHoroscope);
+router.post("/horoscope", createOrUpdateHoroscope);
 
 // Get all Horoscopes
 router.get("/horoscopes", getAllHoroscopes);

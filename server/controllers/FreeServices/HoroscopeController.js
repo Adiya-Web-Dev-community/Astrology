@@ -2,7 +2,8 @@ const Horoscope = require("../../models/FreeServices/Horoscope");
 
 // Create or Update Horoscope
 exports.createOrUpdateHoroscope = async (req, res) => {
-  const { zodiacSign, daily, monthly, yearly } = req.body;
+  const { zodiacSign, daily, monthly, yearly, dateRange, zodiacImage } =
+    req.body;
 
   try {
     // Get current date information
@@ -59,6 +60,9 @@ exports.createOrUpdateHoroscope = async (req, res) => {
         money: yearly?.money || horoscope.yearly.money,
       };
 
+      horoscope.dateRange = dateRange || horoscope.dateRange;
+      horoscope.zodiacImage = zodiacImage || horoscope.zodiacImage;
+
       await horoscope.save();
 
       // Return response with date
@@ -78,6 +82,8 @@ exports.createOrUpdateHoroscope = async (req, res) => {
             year: currentYear,
             ...horoscope.yearly,
           },
+          dateRange: horoscope.dateRange,
+          zodiacImage: horoscope.zodiacImage,
         },
       });
     } else {
@@ -103,6 +109,8 @@ exports.createOrUpdateHoroscope = async (req, res) => {
           health: yearly?.health,
           money: yearly?.money,
         },
+        dateRange: dateRange || null,
+        zodiacImage: zodiacImage || null,
       });
 
       await horoscope.save();
@@ -124,6 +132,8 @@ exports.createOrUpdateHoroscope = async (req, res) => {
             year: currentYear,
             ...horoscope.yearly,
           },
+          dateRange: horoscope.dateRange,
+          zodiacImage: horoscope.zodiacImage,
         },
       });
     }
@@ -136,7 +146,9 @@ exports.createOrUpdateHoroscope = async (req, res) => {
 // Get All Horoscopes
 exports.getAllHoroscopes = async (req, res) => {
   try {
-    const horoscopes = await Horoscope.find().select("zodiacSign zodiacImage");
+    const horoscopes = await Horoscope.find().select(
+      "zodiacSign zodiacImage daily.description"
+    );
     res.json(horoscopes);
   } catch (error) {
     console.error(error);
