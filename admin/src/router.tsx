@@ -247,6 +247,32 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "/astro-services",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/astroServices/astroServices.tsx")
+              ).default,
+            }),
+          },
+          {
+            path: "/astro-services/group-puja",
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "@/components/astroServices/groupPuja/groupPuja.tsx"
+                )
+              ).default,
+            }),
+          },
+          {
+            path: "/astro-services/gemstone",
+            lazy: async () => ({
+              Component: (
+                await import("@/components/astroServices/gemStone/gemStone.tsx")
+              ).default,
+            }),
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default,

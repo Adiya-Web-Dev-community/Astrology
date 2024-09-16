@@ -187,6 +187,12 @@ export const sidelinks: SideLink[] = [
     icon: <IconUsers size={18} />,
   },
   {
+    title: "Astro Services",
+    label: "",
+    href: "/astro-services",
+    icon: <BoxIcon size={18} />,
+  },
+  {
     title: "Free Services",
     label: "",
     href: "/free-services",
