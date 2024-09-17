@@ -27,11 +27,24 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { useForm } from "react-hook-form";
 import { Toast } from "@/components/ui/toast";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import axiosInstance from "@/api/client";
+import { Layout } from "@/components/custom/layout";
+import { Search } from "@/components/search";
+import ThemeSwitch from "@/components/theme-switch";
+import { UserNav } from "@/components/user-nav";
 
 const fetchGemstones = async () => {
   const response = await axiosInstance.get("/astro-services/gemstones");
@@ -185,180 +198,227 @@ const GemstoneProductsManagement = () => {
   if (isError) return <div>Error loading gemstones: {error.message}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Gemstone Products Management</h1>
+    <Layout>
+      <Layout.Header className="border border-b">
+        <div className="ml-auto flex items-center space-x-4">
+          <Search />
+          <ThemeSwitch />
+          <UserNav />
+        </div>
+      </Layout.Header>
+      <Layout.Body>
+        <div className="container mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-4">
+            Gemstone Products Management
+          </h1>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button onClick={handleDialogOpen}>Add New Gemstone</Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {isEditMode ? "Edit Gemstone" : "Add New Gemstone"}
-            </DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                rules={{ required: "Name is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                rules={{ required: "Description is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="price"
-                rules={{ required: "Price is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.01" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="carat"
-                rules={{ required: "Carat is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Carat</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.1" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="zodiacSign"
-                rules={{ required: "Zodiac Sign is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Zodiac Sign</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Images (comma-separated URLs)</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="availability"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Availability</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                disabled={
-                  createGemstoneeMutation.isPending ||
-                  updateGemstoneMutation.isPending
-                }
-              >
-                {(createGemstoneeMutation.isPending ||
-                  updateGemstoneMutation.isPending) && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {isEditMode ? "Update" : "Create"}
-              </Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Table className="mt-4">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Zodiac Sign</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Carat</TableHead>
-            <TableHead>Availability</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {gemstones.map((gemstone) => (
-            <TableRow key={gemstone._id}>
-              <TableCell>{gemstone.name}</TableCell>
-              <TableCell>{gemstone.zodiacSign}</TableCell>
-              <TableCell>${gemstone.price}</TableCell>
-              <TableCell>{gemstone.carat}</TableCell>
-              <TableCell>
-                {gemstone.availability ? "Available" : "Not Available"}
-              </TableCell>
-              <TableCell>
-                <Button onClick={() => handleEdit(gemstone)} className="mr-2">
-                  Edit
-                </Button>
-                <Button
-                  onClick={() => handleDelete(gemstone._id)}
-                  variant="destructive"
-                  disabled={deleteGemstoneMutation.isPending}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleDialogOpen}>Add New Gemstone</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>
+                  {isEditMode ? "Edit Gemstone" : "Add New Gemstone"}
+                </DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
                 >
-                  {deleteGemstoneMutation.isPending && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    rules={{ required: "Name is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    rules={{ required: "Description is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    rules={{ required: "Price is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.01" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="carat"
+                    rules={{ required: "Carat is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Carat</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.1" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="zodiacSign"
+                    rules={{ required: "Zodiac Sign is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Zodiac Sign</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="images"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Images (comma-separated URLs)</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="availability"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Availability
+                          </FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={
+                      createGemstoneeMutation.isPending ||
+                      updateGemstoneMutation.isPending
+                    }
+                  >
+                    {(createGemstoneeMutation.isPending ||
+                      updateGemstoneMutation.isPending) && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {isEditMode ? "Update" : "Create"}
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+
+          <Table className="mt-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Zodiac Sign</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Carat</TableHead>
+                <TableHead>Availability</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {gemstones.map((gemstone) => (
+                <TableRow key={gemstone._id}>
+                  <TableCell>{gemstone.name}</TableCell>
+                  <TableCell>{gemstone.zodiacSign}</TableCell>
+                  <TableCell>${gemstone.price}</TableCell>
+                  <TableCell>{gemstone.carat}</TableCell>
+                  <TableCell>
+                    {gemstone.availability ? "Available" : "Not Available"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleEdit(gemstone)}
+                      className="mr-2"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(gemstone._id)}
+                      variant="destructive"
+                      disabled={deleteGemstoneMutation.isPending}
+                    >
+                      {deleteGemstoneMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="mt-4 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#" isActive>
+                    2
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
+      </Layout.Body>
+    </Layout>
   );
 };
 

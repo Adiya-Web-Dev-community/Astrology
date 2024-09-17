@@ -254,14 +254,6 @@ exports.resendOTP = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    let profile;
-    if (user.role === "customer") {
-      profile = await Customer.findOne({ user: user._id });
-    } else if (user.role === "supplier") {
-      profile = await Supplier.findOne({ user: user._id });
-    } else if (user.role === "admin") {
-      profile = await Admin.findOne({ user: user._id });
-    }
     res.status(200).json({ success: true, data: { user, profile } });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });

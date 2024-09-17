@@ -24,6 +24,8 @@ exports.createGroupPuja = async (req, res) => {
 // Update a group puja
 exports.updateGroupPuja = async (req, res) => {
   try {
+    console.log(req.body);
+
     const puja = await GroupPuja.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
