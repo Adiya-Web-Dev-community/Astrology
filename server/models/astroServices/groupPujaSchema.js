@@ -10,7 +10,7 @@ const groupPujaSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     maxParticipants: { type: Number, required: true },
     bookedParticipants: { type: Number, default: 0 },
-    images: { type: String },
+    image: { type: String },
     astrologer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Astrologer",
