@@ -231,7 +231,7 @@ const PoojaForm = ({
       price: "",
       maxParticipants: "",
       bookedParticipants: "0",
-      astrologerId: "",
+      astrologer: "",
     },
   });
 

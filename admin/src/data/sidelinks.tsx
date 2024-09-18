@@ -22,7 +22,7 @@ import {
   IconUsers,
   IconLock,
 } from "@tabler/icons-react";
-import { BoxIcon } from "lucide-react";
+import { BoxIcon, HelpCircleIcon } from "lucide-react";
 
 export interface NavLink {
   title: string;
@@ -209,5 +209,11 @@ export const sidelinks: SideLink[] = [
     label: "",
     href: "/settings",
     icon: <IconSettings size={18} />,
+  },
+  {
+    title: "Support",
+    label: "",
+    href: "/support",
+    icon: <HelpCircleIcon size={18} />,
   },
 ];

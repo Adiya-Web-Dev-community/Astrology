@@ -273,6 +273,12 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "/support",
+            lazy: async () => ({
+              Component: (await import("@/components/Support.tsx")).default,
+            }),
+          },
+          {
             path: "extra-components",
             lazy: async () => ({
               Component: (await import("@/pages/extra-components")).default,
