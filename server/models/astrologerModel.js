@@ -49,7 +49,7 @@ const AstrologerSchema = new Schema(
     },
     pricing: {
       type: Number,
-      required: [true, "Please provide the pricing per consultation"],
+      // required: [true, "Please provide the pricing per consultation"],
     },
     userId: {
       type: Schema.Types.ObjectId,

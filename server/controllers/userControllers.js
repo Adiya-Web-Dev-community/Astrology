@@ -53,68 +53,6 @@ exports.requestOTP = async (req, res) => {
   }
 };
 
-// exports.requestOTP = async (req, res) => {
-//   try {
-//     const { email } = req.body;
-
-//     // Generate the OTP
-//     const otp = generateOTP();
-
-//     // Filter to find user by email
-//     const filter = { email: email };
-
-//     // Update object with OTP and OTP expiration
-//     const update = {
-//       otp: {
-//         code: otp,
-//         expiresAt: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
-//       },
-//     };
-
-//     // Upsert user: update if exists or insert new without triggering required validations for password, etc.
-//     const user = await User.findOneAndUpdate(
-//       filter,
-//       { $set: update }, // Only set the otp, not other fields
-//       {
-//         new: true, // Return the new object after the update
-//         upsert: true, // Create a new object if none exists
-//         setDefaultsOnInsert: true, // Applies defaults if creating a new document
-//       }
-//     );
-
-//     // Define the HTML email content
-//     const otpHtml = `
-//      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dddddd; border-radius: 10px;">
-//        <h2 style="color: #333;">OTP Verification</h2>
-//        <p style="color: #555;">
-//          Your OTP is
-//        </p>
-//        <div style="text-align: center; margin: 20px 0;">
-//          <p style="font-size: 18px; font-weight: bold; color: #007BFF;">${otp}</p>
-//        </div>
-//        <p style="color: #999; font-size: 12px;">
-//          Best regards,<br>
-//          Your Service Team
-//        </p>
-//      </div>
-//    `;
-//     await sendEmail(email, "Verify Your Account", otpHtml);
-
-//     // Return a successful response
-//     return res.status(200).json({
-//       success: true,
-//       message: "OTP sent successfully",
-//       // Optionally, return the user data if needed
-//     });
-//   } catch (err) {
-//     console.error(err); // Log the error for debugging purposes
-//     return res.status(500).json({
-//       success: false,
-//       message: "Internal Server Error",
-//     });
-//   }
-// };
-
 exports.register = async (req, res) => {
   try {
     const { email, password, firstName, lastName, role, phoneNumber } =
@@ -260,18 +198,6 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// exports.getAllUser = async (req, res) => {
-//   try {
-//     const user = await User.find({
-//       role:"customer"
-//     });
-
-//     res.status(200).json({ success: true, data:  user });
-//   } catch (error) {
-//     res.status(400).json({ success: false, error: error.message });
-//   }
-// };
-
 exports.getAllUser = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -355,57 +281,6 @@ exports.updatePassword = async (req, res) => {
   }
 };
 
-// exports.forgotPassword = async (req, res) => {
-//   try {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "User not found" });
-//     }
-//     const resetToken = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
-//       expiresIn: "1h",
-//     });
-//     const resetLink = `http://localhost:5173/auth/reset-password?token=${resetToken}`;
-
-//     const resetlink = `
-//       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dddddd; border-radius: 10px;">
-//         <h2 style="color: #333;">Password Reset Request</h2>
-//         <p style="color: #555;">
-//           You requested to reset your password. Please use the following link to reset it:
-//         </p>
-//         <div style="text-align: center; margin: 20px 0;">
-//           <a href="${resetLink}" style="font-size: 18px; font-weight: bold; color: #007BFF;">Reset Password</a>
-//         </div>
-//         <p style="color: #555;">
-//           If you did not request this password reset, please ignore this email.
-//         </p>
-//         <p style="color: #999; font-size: 12px;">
-//           Best regards,<br>
-//           Your Service Team
-//         </p>
-//       </div>
-//     `;
-
-//     await sendEmail(
-//       email,
-//       "Password Reset Request",
-//       "Please use the following link to reset your password: [link]",
-//       resetlink
-//     );
-//     res
-//       .status(200)
-//       .json({ success: true, message: "Password reset link sent to email" });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal server error",
-//       error: error.message,
-//     });
-//   }
-// };
-
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -485,6 +360,163 @@ exports.resetPassword = async (req, res) => {
       success: false,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+};
+
+exports.requestAstroOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find user by email without password, firstName, and lastName
+    let user = await User.findOne({ email, role: "astrologer" });
+
+    // If user doesn't exist, create a new one
+    if (!user) {
+      return res.status(401).json({ success: false, message: "No User Found" });
+    }
+
+    const otp = generateOTP();
+    user.otp = {
+      code: otp,
+      expiresAt: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
+    };
+    await user.save();
+
+    // Define the HTML email content
+    const otpHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dddddd; border-radius: 10px;">
+        <h2 style="color: #333;">OTP Verification</h2>
+        <p style="color: #555;">
+          Your OTP is
+        </p>
+        <div style="text-align: center; margin: 20px 0;">
+          <p style="font-size: 18px; font-weight: bold; color: #007BFF;">${otp}</p>
+        </div>
+        <p style="color: #999; font-size: 12px;">
+          Best regards,<br>
+          Your Service Team
+        </p>
+      </div>
+    `;
+    await sendEmail(email, "Verify Your Account", otpHtml);
+
+    res.status(201).json({
+      success: true,
+      message: "OTP has been sent to your email. Please check your inbox.",
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+// Register Astrologer and User
+exports.registerAstrologer = async (req, res, next) => {
+  const {
+    email,
+    firstName,
+    lastName,
+    phoneNumber,
+    dateOfBirth,
+    gender,
+    experience,
+    language,
+    specialties,
+  } = req.body;
+
+  try {
+    let user = new User({
+      email,
+      role: "astrologer",
+      firstName,
+      lastName,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+    });
+
+    user = await user.save();
+
+    const astrologer = new Astrologer({
+      name: `${firstName} ${lastName}`,
+      email,
+      phoneNumber,
+      bio,
+      experience,
+      pricing,
+      language,
+      specialties,
+      userId: user._id,
+    });
+
+    await astrologer.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Astrologer registered successfully",
+      data: {
+        user,
+        astrologer,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Update Astrologer Profile
+exports.updateAstrologerProfile = async (req, res, next) => {
+  const userId = req.user.id; // Assuming user is authenticated and userId is in the token
+  const {
+    name,
+    phoneNumber,
+    bio,
+    experience,
+    experienceAndQualification,
+    pricing,
+    language,
+    specialties,
+    profileImage,
+  } = req.body;
+
+  try {
+    // Find astrologer by userId
+    let astrologer = await Astrologer.findOne({ userId });
+
+    if (!astrologer) {
+      return res.status(404).json({
+        success: false,
+        message: "Astrologer profile not found",
+      });
+    }
+
+    // Update astrologer profile fields
+    astrologer.name = name || astrologer.name;
+    astrologer.phoneNumber = phoneNumber || astrologer.phoneNumber;
+    astrologer.bio = bio || astrologer.bio;
+    astrologer.experience = experience || astrologer.experience;
+    astrologer.experienceAndQualification =
+      experienceAndQualification || astrologer.experienceAndQualification;
+    astrologer.pricing = pricing || astrologer.pricing;
+    astrologer.language = language || astrologer.language;
+    astrologer.specialties = specialties || astrologer.specialties;
+    astrologer.profileImage = profileImage || astrologer.profileImage;
+
+    // Save updated profile
+    await astrologer.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Astrologer profile updated successfully",
+      data: astrologer,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
