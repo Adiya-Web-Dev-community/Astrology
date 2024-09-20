@@ -469,7 +469,7 @@ exports.registerAstrologer = async (req, res, next) => {
 
 // Update Astrologer Profile
 exports.updateAstrologerProfile = async (req, res, next) => {
-  const userId = req.user.id; // Assuming user is authenticated and userId is in the token
+  const userId = req.user.id;
   const {
     name,
     phoneNumber,

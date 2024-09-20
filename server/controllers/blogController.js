@@ -51,13 +51,42 @@ const createBlog = async (req, res) => {
   }
 };
 
-// Get all blog posts
+// // Get all blog posts
+// const getAllBlogs = async (req, res) => {
+//   try {
+//     const blogs = await Blog.find().populate("category").exec();
+//     res.status(200).json(blogs);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+// Get all blog posts with optional pagination
 const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find().populate("category").exec();
-    res.status(200).json(blogs);
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+
+    const blogs = await Blog.find()
+      .populate("category")
+      .limit(limit) // Limit the number of blog posts returned
+      .skip((page - 1) * limit) // Skip posts to simulate pagination
+      .exec();
+
+    // Optionally, you might want to get the total count of blogs for pagination info
+    const totalBlogs = await Blog.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      data: blogs,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalBlogs / limit),
+        totalBlogs,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
