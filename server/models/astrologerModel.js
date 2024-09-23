@@ -34,11 +34,11 @@ const AstrologerSchema = new Schema(
     },
     bio: {
       type: String,
-      required: [true, "Please provide a short biography"],
+      // required: [true, "Please provide a short biography"],
     },
     experienceAndQualification: {
       type: String,
-      required: [true, "Please provide a Experience And Qualification"],
+      // required: [true, "Please provide a Experience And Qualification"],
     },
     profileImage: {
       type: String,

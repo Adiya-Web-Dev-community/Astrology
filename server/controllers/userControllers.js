@@ -423,6 +423,7 @@ exports.registerAstrologer = async (req, res, next) => {
     experience,
     language,
     specialties,
+    profileImage,
   } = req.body;
 
   try {
@@ -434,6 +435,7 @@ exports.registerAstrologer = async (req, res, next) => {
       phoneNumber,
       dateOfBirth,
       gender,
+      profilePic: profileImage,
     });
 
     user = await user.save();
@@ -447,6 +449,7 @@ exports.registerAstrologer = async (req, res, next) => {
       pricing,
       language,
       specialties,
+      profileImage,
       userId: user._id,
     });
 
