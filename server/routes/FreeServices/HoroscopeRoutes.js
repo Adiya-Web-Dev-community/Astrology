@@ -8,16 +8,16 @@ const {
 } = require("../../controllers/FreeServices/HoroscopeController");
 const { protect } = require("../../middleware/authMiddleware");
 
-// Create or Update Horoscope
-router.post("/horoscope", createOrUpdateHoroscope);
+// // Create or Update Horoscope
+// router.post("/horoscope", createOrUpdateHoroscope);
 
-// Get all Horoscopes
-router.get("/horoscopes", getAllHoroscopes);
+// // Get all Horoscopes
+// router.get("/horoscopes", getAllHoroscopes);
 
-// Get a specific Horoscope by Zodiac Sign
-router.get("/horoscope/:zodiacSign", getHoroscopeByZodiac);
+// // Get a specific Horoscope by Zodiac Sign
+// router.get("/horoscope/:zodiacSign", getHoroscopeByZodiac);
 
-// Delete Horoscope by Zodiac Sign
-router.delete("/horoscope/:zodiacSign", protect, deleteHoroscope);
+// // Delete Horoscope by Zodiac Sign
+// router.delete("/horoscope/:zodiacSign", protect, deleteHoroscope);
 
 module.exports = router;

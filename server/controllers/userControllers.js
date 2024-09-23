@@ -5,6 +5,7 @@ const { sendEmail } = require("../helpers/emailHelper");
 const { generateOTP } = require("../helpers/otpHelper");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Astrologer = require("../models/astrologerModel");
 
 exports.requestOTP = async (req, res) => {
   try {
