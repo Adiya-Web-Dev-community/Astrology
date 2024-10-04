@@ -1,175 +1,382 @@
-// controllers/prokeralaController.js
-const axios = require('axios');
+// const axios = require("axios");
+// const { getAccessToken } = require("../../helpers/accessToken");
+
+// exports.getTodaysPanchang = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { latitude, longitude, ayanamsa, language } = req.query;
+
+//     if (!latitude || !longitude || !ayanamsa) {
+//       return res
+//         .status(400)
+//         .json({ message: "Latitude, longitude, and ayanamsa are required" });
+//     }
+
+//     const datetime = new Date().toISOString();
+
+//     const url = `https://api.prokerala.com/v2/astrology/panchang/advanced`;
+//     const response = await axios.get(url, {
+//       params: {
+//         ayanamsa,
+//         coordinates: `${latitude},${longitude}`,
+//         datetime,
+//         la: language,
+//       },
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error("Error fetching today's Panchang:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// exports.getJanamKundali = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { latitude, longitude, ayanamsa, language } = req.query;
+
+//     if (!latitude || !longitude || !ayanamsa) {
+//       return res
+//         .status(400)
+//         .json({ message: "Latitude, longitude, and ayanamsa are required" });
+//     }
+
+//     const url = `https://api.prokerala.com/v2/astrology/kundli`;
+//     const datetime = new Date().toISOString();
+
+//     const response = await axios.get(url, {
+//       params: {
+//         ayanamsa,
+//         coordinates: `${latitude},${longitude}`,
+//         datetime,
+//         la: language,
+//       },
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error("Error fetching Janam Kundali:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// exports.getKundaliMatch = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { maleDetails, femaleDetails } = req.body;
+
+//     const url = `https://api.prokerala.com/v2/astrology/kundli-matching/advanced`;
+
+//     const response = await axios.get(url, {
+//       params: {
+//         ayanamsa: 1, // Assuming Lahiri, adjust as needed
+//         boy_coordinates: `${maleDetails.location.latitude},${maleDetails.location.longitude}`,
+//         boy_dob: `${maleDetails.date}T${maleDetails.time}:00Z`,
+//         girl_coordinates: `${femaleDetails.location.latitude},${femaleDetails.location.longitude}`,
+//         girl_dob: `${femaleDetails.date}T${femaleDetails.time}:00Z`,
+//         la: "en", // Language, adjust as needed (optional)
+//       },
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error("Error fetching Kundali Match:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// exports.getShubhMuhurat = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { date, location } = req.body;
+
+//     if (!location || !location.latitude || !location.longitude || !date) {
+//       return res.status(400).json({
+//         message: "Location (latitude, longitude) and date are required",
+//       });
+//     }
+
+//     const datetime = `${date}T00:00:00Z`; // ISO 8601 date format
+//     const coordinates = `${location.latitude},${location.longitude}`;
+
+//     // Base URL for Prokerala API
+//     const baseUrl = `https://api.prokerala.com/v2/astrology`;
+
+//     // Define all the endpoints we will be calling
+//     const endpoints = [
+//       `${baseUrl}/choghadiya`,
+//       `${baseUrl}/hora`,
+//       `${baseUrl}/gowri-nalla-neram`,
+//       `${baseUrl}/inauspicious-period`,
+//     ];
+
+//     // Fetch data from all endpoints concurrently using Promise.all
+//     const [
+//       choghadiyaResponse,
+//       horaResponse,
+//       gowriNallaResponse,
+//       rahuKaalResponse,
+//     ] = await Promise.all(
+//       endpoints.map((endpoint) =>
+//         axios.get(endpoint, {
+//           params: {
+//             ayanamsa: 1, // Lahiri ayanamsa (can adjust as needed)
+//             coordinates: coordinates,
+//             datetime: datetime,
+//             la: "en", // Optional language parameter, set to 'en' (English)
+//           },
+//           headers: {
+//             Authorization: `Bearer ${accessToken}`,
+//           },
+//         })
+//       )
+//     );
+
+//     // Combine the results into a single response
+//     const responseData = {
+//       choghadiya: choghadiyaResponse.data,
+//       horaTiming: horaResponse.data,
+//       gowriNallaNeram: gowriNallaResponse.data,
+//       rahuKaal: rahuKaalResponse.data,
+//     };
+
+//     res.json(responseData);
+//   } catch (error) {
+//     console.error("Error fetching Shubh Muhurat details:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// exports.getVratUpvaas = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { year, month } = req.query;
+
+//     const url = `https://api.prokerala.com/v2/astrology/vrat-upvaas`;
+
+//     const response = await axios.get(url, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//       params: {
+//         year: year,
+//         month: month,
+//       },
+//     });
+
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error("Error fetching Vrat and Upvaas:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// exports.getDailyHoroscope = async (req, res) => {
+//   try {
+//     const accessToken = await getAccessToken();
+//     const { sign } = req.query; // Expecting datetime and sign in the query parameters
+
+//     const datetime = new Date().toISOString();
+
+//     if (!datetime || !sign) {
+//       return res
+//         .status(400)
+//         .json({ message: "Datetime and sign are required" });
+//     }
+
+//     // Base URL for Prokerala API
+//     const baseUrl = `https://api.prokerala.com/v2/horoscope/daily`;
+
+//     // Fetch daily horoscope data
+//     const horoscopeResponse = await axios.get(baseUrl, {
+//       params: {
+//         datetime,
+//         sign: sign.toLowerCase(),
+//       },
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     // Check if the response status is OK
+//     if (horoscopeResponse.status === 200) {
+//       res.json(horoscopeResponse.data);
+//     } else {
+//       res
+//         .status(horoscopeResponse.status)
+//         .json({ message: "Failed to fetch horoscope data" });
+//     }
+//   } catch (error) {
+//     console.error("Error fetching daily horoscope:", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+//=======================================================================
+const axios = require("axios");
+const { getAccessToken } = require("../../helpers/accessToken");
+
+const BASE_URL = process.env.PROKERALA_API_BASE_URL;
+
+const makeApiRequest = async (endpoint, params) => {
+  try {
+    const token = await getAccessToken();
+    const response = await axios.get(`${BASE_URL}${endpoint}`, {
+      params,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching data from ${endpoint}:`, error.message);
+    if (error.response) {
+      throw new Error(
+        `API Error: ${error.response.status} - ${
+          error.response.data.message || "Unknown error"
+        }`
+      );
+    }
+    throw new Error("Internal Server Error");
+  }
+};
+
+const handleApiRequest = async (req, res, apiCall) => {
+  try {
+    const data = await apiCall();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.message.startsWith("API Error") ? 400 : 500)
+      .json({ message: error.message });
+  }
+};
 
 exports.getTodaysPanchang = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { location } = req.body;
+  const { latitude, longitude, ayanamsa, language } = req.query;
 
-    const url = `https://api.prokerala.com/v2/astrology/panchang`;
-
-    const response = await axios.post(
-      url,
-      {
-        date: new Date().toISOString().split('T')[0],
-        location: {
-          latitude: location.latitude,
-          longitude: location.longitude,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching today\'s Panchang:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
+  if (!latitude || !longitude || !ayanamsa) {
+    return res
+      .status(400)
+      .json({ message: "Latitude, longitude, and ayanamsa are required" });
   }
+
+  const params = {
+    ayanamsa,
+    coordinates: `${latitude},${longitude}`,
+    datetime: new Date().toISOString(),
+    la: language,
+  };
+
+  await handleApiRequest(req, res, () =>
+    makeApiRequest("/astrology/panchang/advanced", params)
+  );
 };
 
 exports.getJanamKundali = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { date, time, location } = req.body;
+  const { latitude, longitude, ayanamsa, language } = req.query;
 
-    const url = `https://api.prokerala.com/v2/astrology/kundali`;
-
-    const response = await axios.post(
-      url,
-      {
-        datetime: `${date} ${time}`,
-        location: {
-          latitude: location.latitude,
-          longitude: location.longitude,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching Janam Kundali:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
+  if (!latitude || !longitude || !ayanamsa) {
+    return res
+      .status(400)
+      .json({ message: "Latitude, longitude, and ayanamsa are required" });
   }
+
+  const params = {
+    ayanamsa,
+    coordinates: `${latitude},${longitude}`,
+    datetime: new Date().toISOString(),
+    la: language,
+  };
+
+  await handleApiRequest(req, res, () =>
+    makeApiRequest("/astrology/kundli", params)
+  );
 };
 
 exports.getKundaliMatch = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { maleDetails, femaleDetails } = req.body;
+  const { maleDetails, femaleDetails } = req.body;
 
-    const url = `https://api.prokerala.com/v2/astrology/kundali/match`;
+  const params = {
+    ayanamsa: 1,
+    boy_coordinates: `${maleDetails.location.latitude},${maleDetails.location.longitude}`,
+    boy_dob: `${maleDetails.date}T${maleDetails.time}:00Z`,
+    girl_coordinates: `${femaleDetails.location.latitude},${femaleDetails.location.longitude}`,
+    girl_dob: `${femaleDetails.date}T${femaleDetails.time}:00Z`,
+    la: "en",
+  };
 
-    const response = await axios.post(
-      url,
-      {
-        male: {
-          datetime: `${maleDetails.date} ${maleDetails.time}`,
-          location: {
-            latitude: maleDetails.location.latitude,
-            longitude: maleDetails.location.longitude,
-          },
-        },
-        female: {
-          datetime: `${femaleDetails.date} ${femaleDetails.time}`,
-          location: {
-            latitude: femaleDetails.location.latitude,
-            longitude: femaleDetails.location.longitude,
-          },
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching Kundali Match:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
+  await handleApiRequest(req, res, () =>
+    makeApiRequest("/astrology/kundli-matching/advanced", params)
+  );
 };
 
 exports.getShubhMuhurat = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { date, eventType, location } = req.body;
+  const { date, location } = req.body;
 
-    const url = `https://api.prokerala.com/v2/astrology/muhurat/${eventType}`;
-
-    const response = await axios.post(
-      url,
-      {
-        date: date,
-        location: {
-          latitude: location.latitude,
-          longitude: location.longitude,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching Shubh Muhurat:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
+  if (!location || !location.latitude || !location.longitude || !date) {
+    return res
+      .status(400)
+      .json({
+        message: "Location (latitude, longitude) and date are required",
+      });
   }
+
+  const params = {
+    ayanamsa: 1,
+    coordinates: `${location.latitude},${location.longitude}`,
+    datetime: `${date}T00:00:00Z`,
+    la: "en",
+  };
+
+  const endpoints = [
+    "/astrology/choghadiya",
+    "/astrology/hora",
+    "/astrology/gowri-nalla-neram",
+    "/astrology/inauspicious-period",
+  ];
+
+  await handleApiRequest(req, res, async () => {
+    const results = await Promise.all(
+      endpoints.map((endpoint) => makeApiRequest(endpoint, params))
+    );
+    const [choghadiya, horaTiming, gowriNallaNeram, rahuKaal] = results;
+    return { choghadiya, horaTiming, gowriNallaNeram, rahuKaal };
+  });
 };
 
 exports.getVratUpvaas = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { year, month } = req.query;
-
-    const url = `https://api.prokerala.com/v2/astrology/vrat-upvaas`;
-
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-      params: {
-        year: year,
-        month: month,
-      },
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching Vrat and Upvaas:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
+  const { year, month } = req.query;
+  await handleApiRequest(req, res, () =>
+    makeApiRequest("/astrology/vrat-upvaas", { year, month })
+  );
 };
 
-exports.getHoroscope = async (req, res) => {
-  try {
-    const apiKey = process.env.PROKERALA_API_KEY;
-    const { zodiacSign } = req.params;
+exports.getDailyHoroscope = async (req, res) => {
+  const { sign } = req.query;
 
-    const url = `https://api.prokerala.com/v2/astrology/horoscope/${zodiacSign}`;
-
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching horoscope:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
+  if (!sign) {
+    return res.status(400).json({ message: "Sign is required" });
   }
+
+  const params = {
+    datetime: new Date().toISOString(),
+    sign: sign.toLowerCase(),
+  };
+
+  await handleApiRequest(req, res, () =>
+    makeApiRequest("/horoscope/daily", params)
+  );
 };
