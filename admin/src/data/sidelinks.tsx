@@ -210,10 +210,10 @@ export const sidelinks: SideLink[] = [
     href: "/support",
     icon: <HelpCircleIcon size={18} />,
   },
-  {
-    title: "Settings",
-    label: "",
-    href: "/settings",
-    icon: <IconSettings size={18} />,
-  },
+  // {
+  //   title: "Settings",
+  //   label: "",
+  //   href: "/settings",
+  //   icon: <IconSettings size={18} />,
+  // },
 ];

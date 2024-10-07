@@ -1,75 +1,72 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationEllipsis,
-} from "@/components/ui/pagination";
-import { useForm } from "react-hook-form";
-import { Toast } from "@/components/ui/toast";
-import { Loader2 } from "lucide-react";
-import axiosInstance from "@/api/client";
-import { Layout } from "@/components/custom/layout";
-import { Search } from "@/components/search";
-import ThemeSwitch from "@/components/theme-switch";
-import { UserNav } from "@/components/user-nav";
-import PoojaForm from "./poojaForm";
+// import React, { useState } from "react";
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import {
+//   Pagination,
+//   PaginationContent,
+//   PaginationItem,
+//   PaginationLink,
+//   PaginationPrevious,
+//   PaginationNext,
+//   PaginationEllipsis,
+// } from "@/components/ui/pagination";
+// import { Toast } from "@/components/ui/toast";
+// import { Loader2 } from "lucide-react";
+// import axiosInstance from "@/api/client";
+// import { Layout } from "@/components/custom/layout";
+// import { Search } from "@/components/search";
+// import ThemeSwitch from "@/components/theme-switch";
+// import { UserNav } from "@/components/user-nav";
+// import PoojaForm from "./poojaForm";
 
-const fetchGroupPujas = async () => {
-  const response = await axiosInstance.get("/astro-services/pujas");
-  return response;
-};
+// const fetchGroupPujas = async () => {
+//   const response = await axiosInstance.get("/astro-services/pujas");
+//   return response;
+// };
 
-const fetchAstrologers = async () => {
-  const response = await axiosInstance.get("/astrologers");
-  return response.data;
-};
+// const fetchAstrologers = async () => {
+//   const response = await axiosInstance.get("/astrologers");
+//   return response.data;
+// };
 
-const createGroupPuja = async (newPuja) => {
-  const response = await axiosInstance.post("/astro-services/pujas", newPuja);
-  return response.data;
-};
+// const createGroupPuja = async (newPuja) => {
+//   const response = await axiosInstance.post("/astro-services/pujas", newPuja);
+//   return response.data;
+// };
 
-const updateGroupPuja = async (updatedPuja) => {
-  const response = await axiosInstance.put(
-    `/astro-services/pujas/${updatedPuja._id}`,
-    updatedPuja
-  );
-  return response.data;
-};
+// const updateGroupPuja = async (updatedPuja) => {
+//   const response = await axiosInstance.put(
+//     `/astro-services/pujas/${updatedPuja._id}`,
+//     updatedPuja
+//   );
+//   return response.data;
+// };
 
-const deleteGroupPuja = async (id) => {
-  const response = await axiosInstance.delete(`/astro-services/pujas/${id}`);
-  return response.data;
-};
+// const deleteGroupPuja = async (id) => {
+//   const response = await axiosInstance.delete(`/astro-services/pujas/${id}`);
+//   return response.data;
+// };
 
 // const GroupPujaManagement = () => {
 //   const [isEditMode, setIsEditMode] = useState(false);
 //   const [selectedPuja, setSelectedPuja] = useState(null);
 //   const [isDialogOpen, setIsDialogOpen] = useState(false);
 //   const queryClient = useQueryClient();
-
-//   const form = useForm();
 
 //   const {
 //     data: pujas,
@@ -153,7 +150,6 @@ const deleteGroupPuja = async (id) => {
 //       price: parseFloat(data.price),
 //       maxParticipants: parseInt(data.maxParticipants),
 //       bookedParticipants: parseInt(data.bookedParticipants),
-//       images: data.images.split(",").map((url) => url.trim()),
 //     };
 
 //     if (isEditMode) {
@@ -166,11 +162,6 @@ const deleteGroupPuja = async (id) => {
 //   const handleEdit = (puja) => {
 //     setIsEditMode(true);
 //     setSelectedPuja(puja);
-//     form.reset({
-//       ...puja,
-//       date: new Date(puja.date).toISOString().split("T")[0],
-//       images: puja.images.join(", "),
-//     });
 //     setIsDialogOpen(true);
 //   };
 
@@ -183,17 +174,6 @@ const deleteGroupPuja = async (id) => {
 //   const handleDialogOpen = () => {
 //     setIsEditMode(false);
 //     setSelectedPuja(null);
-//     form.reset({
-//       pujaName: "",
-//       description: "",
-//       date: "",
-//       duration: "",
-//       location: "",
-//       price: "",
-//       maxParticipants: "",
-//       bookedParticipants: "0",
-//       images: "",
-//     });
 //     setIsDialogOpen(true);
 //   };
 
@@ -249,6 +229,7 @@ const deleteGroupPuja = async (id) => {
 //                 <TableHead>Price</TableHead>
 //                 <TableHead>Max Participants</TableHead>
 //                 <TableHead>Booked Participants</TableHead>
+//                 <TableHead>Image</TableHead>
 //                 <TableHead>Actions</TableHead>
 //               </TableRow>
 //             </TableHeader>
@@ -263,6 +244,15 @@ const deleteGroupPuja = async (id) => {
 //                   <TableCell>${puja.price}</TableCell>
 //                   <TableCell>{puja.maxParticipants}</TableCell>
 //                   <TableCell>{puja.bookedParticipants}</TableCell>
+//                   <TableCell>
+//                     {puja.image && (
+//                       <img
+//                         src={puja.image}
+//                         alt={puja.pujaName}
+//                         className="w-12 h-12 object-cover"
+//                       />
+//                     )}
+//                   </TableCell>
 //                   <TableCell>
 //                     <Button onClick={() => handleEdit(puja)} className="mr-2">
 //                       Edit
@@ -315,29 +305,97 @@ const deleteGroupPuja = async (id) => {
 // };
 
 // export default GroupPujaManagement;
-//=====================================================
+//====================================================
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { Toast } from "@/components/ui/toast";
+import { Loader2 } from "lucide-react";
+import axiosInstance from "@/api/client";
+import { Layout } from "@/components/custom/layout";
+import { Search } from "@/components/search";
+import ThemeSwitch from "@/components/theme-switch";
+import { UserNav } from "@/components/user-nav";
+import PoojaForm from "./poojaForm";
+
+const fetchGroupPujas = async (page = 1, limit = 10) => {
+  const response = await axiosInstance.get(`/astro-services/pujas`, {
+    params: { page, limit },
+  });
+  return response;
+};
+
+const fetchAstrologers = async () => {
+  const response = await axiosInstance.get("/astrologers");
+  return response.data;
+};
+
+const createGroupPuja = async (newPuja) => {
+  const response = await axiosInstance.post("/astro-services/pujas", newPuja);
+  return response.data;
+};
+
+const updateGroupPuja = async (updatedPuja) => {
+  const response = await axiosInstance.put(
+    `/astro-services/pujas/${updatedPuja._id}`,
+    updatedPuja
+  );
+  return response.data;
+};
+
+const deleteGroupPuja = async (id) => {
+  const response = await axiosInstance.delete(`/astro-services/pujas/${id}`);
+  return response.data;
+};
 
 const GroupPujaManagement = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedPuja, setSelectedPuja] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10); // Fixed limit for now
+  const [totalPages, setTotalPages] = useState(1);
+
   const queryClient = useQueryClient();
 
   const {
-    data: pujas,
+    data: pujasData,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["groupPujas"],
-    queryFn: fetchGroupPujas,
+    queryKey: ["groupPujas", page],
+    queryFn: () => fetchGroupPujas(page, limit),
+    onSuccess: (data) => setTotalPages(data.totalPages), // Update total pages
   });
 
-  const {
-    data: astrologers = [],
-    isLoading: astrologersLoading,
-    isError: astrologersError,
-  } = useQuery({
+  const { data: astrologers = [] } = useQuery({
     queryKey: ["astrologers"],
     queryFn: fetchAstrologers,
   });
@@ -432,6 +490,10 @@ const GroupPujaManagement = () => {
     setIsDialogOpen(true);
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   if (isLoading)
     return (
       <div className="flex justify-center">
@@ -439,6 +501,9 @@ const GroupPujaManagement = () => {
       </div>
     );
   if (isError) return <div>Error loading pujas: {error.message}</div>;
+
+  const { pujas, totalPujas } = pujasData || { pujas: [], totalPujas: 0 };
+  console.log("qweq", pujasData);
 
   return (
     <Layout>
@@ -527,28 +592,32 @@ const GroupPujaManagement = () => {
               ))}
             </TableBody>
           </Table>
+
           <div className="mt-4 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1}
+                  />
                 </PaginationItem>
+                {[...Array(totalPages)].map((_, idx) => (
+                  <PaginationItem key={idx}>
+                    <PaginationLink
+                      href="#"
+                      isActive={idx + 1 === page}
+                      onClick={() => handlePageChange(idx + 1)}
+                    >
+                      {idx + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
                 <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#" isActive>
-                    2
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages}
+                  />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
