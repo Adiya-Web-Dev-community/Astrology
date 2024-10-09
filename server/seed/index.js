@@ -1,177 +1,177 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const Category = require("../models/categoryModel");
-const User = require("../models/userModel");
-const Astrologer = require("../models/astrologerModel");
+// require("dotenv").config();
+// const mongoose = require("mongoose");
+// const bcrypt = require("bcrypt");
+// const Category = require("../models/categoryModel");
+// const User = require("../models/userModel");
+// const Astrologer = require("../models/astrologerModel");
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://ajmalshk:dGXU4fTxwIfm1lCV@cluster0.rqu0x8d.mongodb.net/Astrology";
+// const MONGODB_URI =
+//   process.env.MONGODB_URI ||
+//   "mongodb+srv://ajmalshk:dGXU4fTxwIfm1lCV@cluster0.rqu0x8d.mongodb.net/Astrology";
 
-mongoose.connect(MONGODB_URI);
+// mongoose.connect(MONGODB_URI);
 
-const categories = [
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f397e"),
-    name: "Love & Relationship",
-    image: "path/to/love_relationship_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3982"),
-    name: "Break-up & Divorce",
-    image: "path/to/breakup_divorce_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3981"),
-    name: "Numerology",
-    image: "path/to/numerology_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3983"),
-    name: "Marital Life",
-    image: "path/to/marital_life_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3984"),
-    name: "Psychic Reading",
-    image: "path/to/psychic_reading_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f397f"),
-    name: "Tarot Reading",
-    image: "path/to/tarot_reading_image.jpg",
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3980"),
-    name: "Career & Job",
-    image: "path/to/career_job_image.jpg",
-  },
-];
+// const categories = [
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f397e"),
+//     name: "Love & Relationship",
+//     image: "path/to/love_relationship_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3982"),
+//     name: "Break-up & Divorce",
+//     image: "path/to/breakup_divorce_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3981"),
+//     name: "Numerology",
+//     image: "path/to/numerology_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3983"),
+//     name: "Marital Life",
+//     image: "path/to/marital_life_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3984"),
+//     name: "Psychic Reading",
+//     image: "path/to/psychic_reading_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f397f"),
+//     name: "Tarot Reading",
+//     image: "path/to/tarot_reading_image.jpg",
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3980"),
+//     name: "Career & Job",
+//     image: "path/to/career_job_image.jpg",
+//   },
+// ];
 
-const users = [
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3985"),
-    email: "admin@example.com",
-    password: "12345678", // This will be hashed before insertion
-    role: "admin",
-    firstName: "Admin",
-    lastName: "User",
-    isVerified: true,
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3986"),
-    email: "customer@example.com",
-    password: "12345678", // This will be hashed before insertion
-    role: "customer",
-    firstName: "John",
-    lastName: "Doe",
-    isVerified: true,
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3987"),
-    email: "astrologer1@example.com",
-    password: "12345678", // This will be hashed before insertion
-    role: "astrologer",
-    firstName: "Jane",
-    lastName: "Smith",
-    isVerified: true,
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3988"),
-    email: "astrologer2@example.com",
-    password: "12345678", // This will be hashed before insertion
-    role: "astrologer",
-    firstName: "Mike",
-    lastName: "Johnson",
-    isVerified: true,
-  },
-];
+// const users = [
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3985"),
+//     email: "admin@example.com",
+//     password: "12345678", // This will be hashed before insertion
+//     role: "admin",
+//     firstName: "Admin",
+//     lastName: "User",
+//     isVerified: true,
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3986"),
+//     email: "customer@example.com",
+//     password: "12345678", // This will be hashed before insertion
+//     role: "customer",
+//     firstName: "John",
+//     lastName: "Doe",
+//     isVerified: true,
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3987"),
+//     email: "astrologer1@example.com",
+//     password: "12345678", // This will be hashed before insertion
+//     role: "astrologer",
+//     firstName: "Jane",
+//     lastName: "Smith",
+//     isVerified: true,
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3988"),
+//     email: "astrologer2@example.com",
+//     password: "12345678", // This will be hashed before insertion
+//     role: "astrologer",
+//     firstName: "Mike",
+//     lastName: "Johnson",
+//     isVerified: true,
+//   },
+// ];
 
-const astrologers = [
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3989"),
-    name: "Jane Smith",
-    email: "astrologer1@example.com",
-    phoneNumber: "1234567890",
-    specialties: [
-      new mongoose.Types.ObjectId("64d84201618d5d18fb1f397e"),
-      new mongoose.Types.ObjectId("64d84201618d5d18fb1f397f"),
-    ],
-    experience: 10,
-    bio: "Jane has been practicing astrology for 10 years, specializing in love and relationships.",
-    profileImage: "path/to/jane_profile.jpg",
-    rating: 4.8,
-    isAvailable: true,
-    pricing: 50,
-    userId: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3987"),
-  },
-  {
-    _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3990"),
-    name: "Mike Johnson",
-    email: "astrologer2@example.com",
-    phoneNumber: "9876543210",
-    specialties: [
-      new mongoose.Types.ObjectId("64d84201618d5d18fb1f3981"),
-      new mongoose.Types.ObjectId("64d84201618d5d18fb1f3980"),
-    ],
-    experience: 15,
-    bio: "Mike is an expert in numerology and career guidance with 15 years of experience.",
-    profileImage: "path/to/mike_profile.jpg",
-    rating: 4.9,
-    isAvailable: true,
-    pricing: 60,
-    userId: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3988"),
-  },
-];
+// const astrologers = [
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3989"),
+//     name: "Jane Smith",
+//     email: "astrologer1@example.com",
+//     phoneNumber: "1234567890",
+//     specialties: [
+//       new mongoose.Types.ObjectId("64d84201618d5d18fb1f397e"),
+//       new mongoose.Types.ObjectId("64d84201618d5d18fb1f397f"),
+//     ],
+//     experience: 10,
+//     bio: "Jane has been practicing astrology for 10 years, specializing in love and relationships.",
+//     profileImage: "path/to/jane_profile.jpg",
+//     rating: 4.8,
+//     isAvailable: true,
+//     pricing: 50,
+//     userId: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3987"),
+//   },
+//   {
+//     _id: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3990"),
+//     name: "Mike Johnson",
+//     email: "astrologer2@example.com",
+//     phoneNumber: "9876543210",
+//     specialties: [
+//       new mongoose.Types.ObjectId("64d84201618d5d18fb1f3981"),
+//       new mongoose.Types.ObjectId("64d84201618d5d18fb1f3980"),
+//     ],
+//     experience: 15,
+//     bio: "Mike is an expert in numerology and career guidance with 15 years of experience.",
+//     profileImage: "path/to/mike_profile.jpg",
+//     rating: 4.9,
+//     isAvailable: true,
+//     pricing: 60,
+//     userId: new mongoose.Types.ObjectId("64d84201618d5d18fb1f3988"),
+//   },
+// ];
 
-async function seedDatabase() {
-  try {
-    await Category.deleteMany({});
-    await User.deleteMany({});
-    await Astrologer.deleteMany({});
-    // Check if data already exists
-    const existingCategories = await Category.countDocuments();
-    const existingUsers = await User.countDocuments();
-    const existingAstrologers = await Astrologer.countDocuments();
+// async function seedDatabase() {
+//   try {
+//     await Category.deleteMany({});
+//     await User.deleteMany({});
+//     await Astrologer.deleteMany({});
+//     // Check if data already exists
+//     const existingCategories = await Category.countDocuments();
+//     const existingUsers = await User.countDocuments();
+//     const existingAstrologers = await Astrologer.countDocuments();
 
-    if (
-      existingCategories > 0 ||
-      existingUsers > 0 ||
-      existingAstrologers > 0
-    ) {
-      console.log("Data already exists. Skipping seeding.");
-      return;
-    }
+//     if (
+//       existingCategories > 0 ||
+//       existingUsers > 0 ||
+//       existingAstrologers > 0
+//     ) {
+//       console.log("Data already exists. Skipping seeding.");
+//       return;
+//     }
 
-    // Seed categories
-    await Category.insertMany(categories);
-    console.log("Categories seeded successfully!");
+//     // Seed categories
+//     await Category.insertMany(categories);
+//     console.log("Categories seeded successfully!");
 
-    // Hash passwords before seeding users
-    for (let user of users) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(user.password, salt);
-    }
+//     // Hash passwords before seeding users
+//     for (let user of users) {
+//       const salt = await bcrypt.genSalt(10);
+//       user.password = await bcrypt.hash(user.password, salt);
+//     }
 
-    // Seed users
-    // Note: We're not manually hashing passwords here as the UserSchema.pre('save') middleware will handle it
-    await User.insertMany(users);
-    console.log("Users seeded successfully!");
+//     // Seed users
+//     // Note: We're not manually hashing passwords here as the UserSchema.pre('save') middleware will handle it
+//     await User.insertMany(users);
+//     console.log("Users seeded successfully!");
 
-    // Seed astrologers
-    await Astrologer.insertMany(astrologers);
-    console.log("Astrologers seeded successfully!");
+//     // Seed astrologers
+//     await Astrologer.insertMany(astrologers);
+//     console.log("Astrologers seeded successfully!");
 
-    console.log("Database seeded successfully!");
-  } catch (error) {
-    console.error("Error seeding database:", error);
-  } finally {
-    mongoose.connection.close();
-  }
-}
+//     console.log("Database seeded successfully!");
+//   } catch (error) {
+//     console.error("Error seeding database:", error);
+//   } finally {
+//     mongoose.connection.close();
+//   }
+// }
 
-seedDatabase();
+// seedDatabase();
 
 // await Blog.deleteMany({});
 // // Seed blogs
@@ -349,3 +349,148 @@ seedDatabase();
 //   },
 // ];
 // await Blog.insertMany(blogs);
+//===================================================
+// const mongoose = require("mongoose");
+// const User = require("../models/userModel");
+// const CallHistory = require("../models/CallHistory");
+
+// // Connect to MongoDB
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("MongoDB Connected"))
+//   .catch((err) => console.log(err));
+
+// const seedCallHistory = async () => {
+//   try {
+//     // Fetch astrologers and clients from the database
+//     const astrologers = await User.find({ role: "astrologer" })
+//       .select("_id")
+//       .lean();
+//     const clients = await User.find({ role: "customer" }).select("_id").lean();
+
+//     // Check if there are enough astrologers and clients
+//     if (astrologers.length === 0 || clients.length === 0) {
+//       console.log(
+//         "No astrologers or clients found in the database. Please add users first."
+//       );
+//       return;
+//     }
+
+//     // Generate dummy call history data
+//     const callHistories = [];
+
+//     for (let i = 0; i < 10; i++) {
+//       // Create 10 dummy records
+//       const astrologerId =
+//         astrologers[Math.floor(Math.random() * astrologers.length)]._id;
+//       const clientId = clients[Math.floor(Math.random() * clients.length)]._id;
+
+//       const callStartTime = new Date(
+//         Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 24)
+//       ); // Random start time in the last 24 hours
+//       const callEndTime = new Date(
+//         callStartTime.getTime() + Math.floor(Math.random() * 1000 * 60 * 30)
+//       ); // Random end time within 30 mins of start time
+//       const callDuration = Math.floor((callEndTime - callStartTime) / 60000); // Duration in minutes
+
+//       callHistories.push({
+//         astrologerId,
+//         clientId,
+//         callStartTime,
+//         callEndTime,
+//         callDuration,
+//         callStatus: "completed",
+//         rating: Math.floor(Math.random() * 5) + 1, // Random rating between 1 and 5
+//         comments: "Great session!", // Sample comment
+//       });
+//     }
+
+//     // Insert call histories into the database
+//     await CallHistory.insertMany(callHistories);
+//     console.log("Call history seeded successfully.");
+//   } catch (error) {
+//     console.error("Error seeding call history:", error);
+//   } finally {
+//     // Close the connection
+//     mongoose.connection.close();
+//   }
+// };
+
+// // Run the seeding function
+// seedCallHistory();
+//============================================
+const mongoose = require("mongoose");
+const User = require("../models/userModel"); // Adjust the path if necessary
+const CallHistory = require("../models/CallHistory"); // Adjust the path if necessary
+
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
+
+const seedCallHistory = async () => {
+  try {
+    // Delete existing call history records
+    await CallHistory.deleteMany();
+    console.log("Existing call history records deleted.");
+    // Fetch astrologers and clients from the database
+    const astrologers = await User.find({ role: "astrologer" })
+      .select("_id")
+      .lean();
+    const clients = await User.find({ role: "customer" }).select("_id").lean();
+
+    // Check if there are enough astrologers and clients
+    if (astrologers.length === 0 || clients.length === 0) {
+      console.log(
+        "No astrologers or clients found in the database. Please add users first."
+      );
+      return;
+    }
+
+    // Generate dummy call history data
+    const callHistories = [];
+
+    // Loop through each astrologer
+    for (const astrologer of astrologers) {
+      // Generate a random number of calls (between 5 and 10)
+      const numCalls = Math.floor(Math.random() * 6) + 5; // Random number between 5 and 10
+
+      for (let i = 0; i < numCalls; i++) {
+        const clientId =
+          clients[Math.floor(Math.random() * clients.length)]._id;
+
+        const callStartTime = new Date(
+          Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 30) // Random start time in the last 30 days
+        );
+        const callEndTime = new Date(
+          callStartTime.getTime() + Math.floor(Math.random() * 1000 * 60 * 30) // Random end time within 30 mins of start time
+        );
+        const callDuration = Math.floor((callEndTime - callStartTime) / 60000); // Duration in minutes
+
+        callHistories.push({
+          astrologerId: astrologer._id,
+          clientId,
+          callStartTime,
+          callEndTime,
+          callDuration,
+          callStatus: "completed",
+          rating: Math.floor(Math.random() * 5) + 1, // Random rating between 1 and 5
+          comments: "Great session!", // Sample comment
+        });
+      }
+    }
+
+    // Insert call histories into the database
+    await CallHistory.insertMany(callHistories);
+    console.log("Call history seeded successfully.");
+  } catch (error) {
+    console.error("Error seeding call history:", error);
+  } finally {
+    // Close the connection
+    mongoose.connection.close();
+  }
+};
+
+// Run the seeding function
+seedCallHistory();
