@@ -323,7 +323,40 @@ exports.getKundaliMatch = async (req, res) => {
   );
 };
 
-exports.getShubhMuhurat = async (req, res) => {
+// exports.getShubhMuhurat = async (req, res) => {
+//   const { date, location } = req.body;
+
+//   if (!location || !location.latitude || !location.longitude || !date) {
+//     return res.status(400).json({
+//       message: "Location (latitude, longitude) and date are required",
+//     });
+//   }
+
+//   const params = {
+//     ayanamsa: 1,
+//     coordinates: `${location.latitude},${location.longitude}`,
+//     datetime: `${date}T00:00:00Z`,
+//     la: "en",
+//   };
+
+//   const endpoints = [
+//     "/astrology/choghadiya",
+//     "/astrology/hora",
+//     "/astrology/gowri-nalla-neram",
+//     "/astrology/inauspicious-period",
+//   ];
+
+//   await handleApiRequest(req, res, async () => {
+//     const results = await Promise.all(
+//       endpoints.map((endpoint) => makeApiRequest(endpoint, params))
+//     );
+//     const [choghadiya, horaTiming, gowriNallaNeram, rahuKaal] = results;
+//     return { choghadiya, horaTiming, gowriNallaNeram, rahuKaal };
+//   });
+// };
+
+// Choghadiya Controller
+exports.getChoghadiya = async (req, res) => {
   const { date, location } = req.body;
 
   if (!location || !location.latitude || !location.longitude || !date) {
@@ -339,19 +372,86 @@ exports.getShubhMuhurat = async (req, res) => {
     la: "en",
   };
 
-  const endpoints = [
-    "/astrology/choghadiya",
-    "/astrology/hora",
-    "/astrology/gowri-nalla-neram",
-    "/astrology/inauspicious-period",
-  ];
+  await handleApiRequest(req, res, async () => {
+    const choghadiya = await makeApiRequest("/astrology/choghadiya", params);
+    return { choghadiya };
+  });
+};
+
+// Hora Timing Controller
+exports.getHoraTiming = async (req, res) => {
+  const { date, location } = req.body;
+
+  if (!location || !location.latitude || !location.longitude || !date) {
+    return res.status(400).json({
+      message: "Location (latitude, longitude) and date are required",
+    });
+  }
+
+  const params = {
+    ayanamsa: 1,
+    coordinates: `${location.latitude},${location.longitude}`,
+    datetime: `${date}T00:00:00Z`,
+    la: "en",
+  };
 
   await handleApiRequest(req, res, async () => {
-    const results = await Promise.all(
-      endpoints.map((endpoint) => makeApiRequest(endpoint, params))
+    const horaTiming = await makeApiRequest("/astrology/hora", params);
+    return { horaTiming };
+  });
+};
+
+// Gowri Nalla Neram Controller
+exports.getGowriNallaNeram = async (req, res) => {
+  const { date, location } = req.body;
+
+  if (!location || !location.latitude || !location.longitude || !date) {
+    return res.status(400).json({
+      message: "Location (latitude, longitude) and date are required",
+    });
+  }
+
+  // Format the datetime to ISO 8601
+  const datetime = new Date(`${date}T00:00:00Z`).toISOString();
+  const params = {
+    ayanamsa: 1,
+    coordinates: `${location.latitude},${location.longitude}`,
+    datetime,
+    la: "en",
+  };
+
+  await handleApiRequest(req, res, async () => {
+    const gowriNallaNeram = await makeApiRequest(
+      "/astrology/gowri-nalla-neram",
+      params
     );
-    const [choghadiya, horaTiming, gowriNallaNeram, rahuKaal] = results;
-    return { choghadiya, horaTiming, gowriNallaNeram, rahuKaal };
+    return { gowriNallaNeram };
+  });
+};
+
+// Rahu Kaal (Inauspicious Period) Controller
+exports.getRahuKaal = async (req, res) => {
+  const { date, location } = req.body;
+
+  if (!location || !location.latitude || !location.longitude || !date) {
+    return res.status(400).json({
+      message: "Location (latitude, longitude) and date are required",
+    });
+  }
+
+  const params = {
+    ayanamsa: 1,
+    coordinates: `${location.latitude},${location.longitude}`,
+    datetime: `${date}T00:00:00Z`,
+    la: "en",
+  };
+
+  await handleApiRequest(req, res, async () => {
+    const rahuKaal = await makeApiRequest(
+      "/astrology/inauspicious-period",
+      params
+    );
+    return { rahuKaal };
   });
 };
 

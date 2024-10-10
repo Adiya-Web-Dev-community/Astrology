@@ -13,7 +13,15 @@ router.post("/janam-kundali", prokeralaController.getJanamKundali);
 router.post("/kundali-match", prokeralaController.getKundaliMatch);
 
 // Shubh Muhurat
-router.post("/shubh-muhurat", prokeralaController.getShubhMuhurat);
+// router.post("/shubh-muhurat", prokeralaController.getShubhMuhurat);
+// Routes for each astrology API
+router.post("/shubh-muhurat/choghadiya", prokeralaController.getChoghadiya);
+router.post("/shubh-muhurat/hora-timing", prokeralaController.getHoraTiming);
+router.post(
+  "/shubh-muhurat/gowri-nalla-neram",
+  prokeralaController.getGowriNallaNeram
+);
+router.post("/shubh-muhurat/rahu-kaal", prokeralaController.getRahuKaal);
 
 // Vrat and Upvaas
 router.post("/vrat-upvaas", prokeralaController.getVratUpvaas);
