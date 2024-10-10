@@ -319,7 +319,7 @@ exports.getKundaliMatch = async (req, res) => {
   };
 
   await handleApiRequest(req, res, () =>
-    makeApiRequest("/astrology/kundli-matching/advanced", params)
+    makeApiRequest("/astrology/kundli-matching", params)
   );
 };
 
@@ -327,11 +327,9 @@ exports.getShubhMuhurat = async (req, res) => {
   const { date, location } = req.body;
 
   if (!location || !location.latitude || !location.longitude || !date) {
-    return res
-      .status(400)
-      .json({
-        message: "Location (latitude, longitude) and date are required",
-      });
+    return res.status(400).json({
+      message: "Location (latitude, longitude) and date are required",
+    });
   }
 
   const params = {
