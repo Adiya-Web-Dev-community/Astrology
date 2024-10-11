@@ -4,6 +4,9 @@ const groupPujaSchema = new mongoose.Schema(
   {
     pujaName: { type: String, required: true },
     description: { type: String, required: true },
+    bio: { type: String },
+    pujaSold: { type: Number },
+    pujaGodGoddes: { type: String },
     date: { type: Date, required: true },
     duration: { type: String, required: true }, // e.g., '2 hours'
     location: { type: String, required: true },
@@ -11,6 +14,7 @@ const groupPujaSchema = new mongoose.Schema(
     maxParticipants: { type: Number, required: true },
     bookedParticipants: { type: Number, default: 0 },
     image: { type: String },
+    Benefits: [String],
     astrologer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Astrologer",

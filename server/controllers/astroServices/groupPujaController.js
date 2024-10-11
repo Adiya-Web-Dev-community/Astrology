@@ -1,15 +1,5 @@
 const GroupPuja = require("../../models/astroServices/groupPujaSchema");
 
-// // Get all group pujas
-// exports.getAllGroupPujas = async (req, res) => {
-//   try {
-//     const pujas = await GroupPuja.find();
-//     res.status(200).json(pujas);
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error });
-//   }
-// };
-
 // Get all group pujas with optional pagination
 exports.getAllGroupPujas = async (req, res) => {
   try {
@@ -41,28 +31,91 @@ exports.getAllGroupPujas = async (req, res) => {
 // Create a new group puja
 exports.createGroupPuja = async (req, res) => {
   try {
-    const puja = new GroupPuja(req.body);
+    const {
+      pujaName,
+      description,
+      date,
+      duration,
+      location,
+      price,
+      maxParticipants,
+      astrologer,
+      Benefits,
+    } = req.body;
+
+    // Basic validation
+    if (
+      !pujaName ||
+      !description ||
+      !date ||
+      !duration ||
+      !location ||
+      !price ||
+      !maxParticipants ||
+      !astrologer
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All required fields must be provided" });
+    }
+
+    // Create a new puja document
+    const puja = new GroupPuja({
+      pujaName,
+      description,
+      date,
+      duration,
+      location,
+      price,
+      maxParticipants,
+      astrologer,
+      Benefits: Benefits || [], // Initialize with an empty array if no benefits provided
+    });
+
+    // Save the new puja
     await puja.save();
+
     res.status(201).json(puja);
   } catch (error) {
-    res.status(400).json({ message: "Invalid data", error });
+    console.error(error);
+    res.status(400).json({ message: "Error creating puja", error });
   }
 };
 
-// Update a group puja
+// Update a group puja with the ability to add or remove benefits
 exports.updateGroupPuja = async (req, res) => {
   try {
-    console.log(req.body);
+    const { addBenefits, removeBenefits } = req.body;
 
-    const puja = await GroupPuja.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    // Find the puja by ID
+    const puja = await GroupPuja.findById(req.params.id);
+
     if (!puja) {
       return res.status(404).json({ message: "Puja not found" });
     }
+
+    // Add new benefits if provided
+    if (addBenefits && Array.isArray(addBenefits)) {
+      puja.Benefits.push(...addBenefits);
+    }
+
+    // Remove specific benefits if provided
+    if (removeBenefits && Array.isArray(removeBenefits)) {
+      puja.Benefits = puja.Benefits.filter(
+        (benefit) => !removeBenefits.includes(benefit)
+      );
+    }
+
+    // Update other fields (if needed)
+    Object.assign(puja, req.body);
+
+    // Save the updated puja
+    await puja.save();
+
     res.status(200).json(puja);
   } catch (error) {
-    res.status(400).json({ message: "Invalid data", error });
+    console.error(error);
+    res.status(400).json({ message: "Error updating puja", error });
   }
 };
 

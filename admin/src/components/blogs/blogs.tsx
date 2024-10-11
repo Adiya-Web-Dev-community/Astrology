@@ -531,6 +531,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const BlogManagement = () => {
   const dispatch = useDispatch();
@@ -646,27 +647,33 @@ const BlogManagement = () => {
               List of Blog Posts
             </h1>
           </div>
-          <Button onClick={handleAddBlog} className="mb-4">
-            Add Blog
-          </Button>
-          <div className="flex items-center gap-2 ">
-            <span>Show:</span>
-            <Select value={limit.toString()} onValueChange={handleLimitChange}>
-              <SelectTrigger className="w-[70px]">
-                <SelectValue placeholder={limit} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-            <span>per page</span>
+          <div className="flex items-center justify-between">
+            <Button onClick={handleAddBlog} className="mb-4">
+              Add Blog
+            </Button>
+            <div className="flex items-center gap-2 ">
+              <span>Show:</span>
+              <Select
+                value={limit.toString()}
+                onValueChange={handleLimitChange}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue placeholder={limit} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <span>per page</span>
+            </div>
           </div>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Thumbnail</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Actions</TableHead>
@@ -675,6 +682,12 @@ const BlogManagement = () => {
             <TableBody>
               {blogsData.data.map((blog) => (
                 <TableRow key={blog._id}>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={blog.thumbnail} alt={blog?.title} />
+                      <AvatarFallback>{blog?.title?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell>{blog.title}</TableCell>
                   <TableCell>{blog?.category?.name}</TableCell>
                   <TableCell>

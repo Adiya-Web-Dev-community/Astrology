@@ -36,12 +36,12 @@ export interface SideLink extends NavLink {
 }
 
 export const sidelinks: SideLink[] = [
-  {
-    title: "Dashboard",
-    label: "",
-    href: "/",
-    icon: <IconLayoutDashboard size={18} />,
-  },
+  // {
+  //   title: "Dashboard",
+  //   label: "",
+  //   href: "/",
+  //   icon: <IconLayoutDashboard size={18} />,
+  // },
   // {
   //   title: 'Tasks',
   //   label: '3',
@@ -192,12 +192,12 @@ export const sidelinks: SideLink[] = [
     href: "/astro-services",
     icon: <BoxIcon size={18} />,
   },
-  {
-    title: "Free Services",
-    label: "",
-    href: "/free-services",
-    icon: <BoxIcon size={18} />,
-  },
+  // {
+  //   title: "Free Services",
+  //   label: "",
+  //   href: "/free-services",
+  //   icon: <BoxIcon size={18} />,
+  // },
   {
     title: "Blogs",
     label: "",

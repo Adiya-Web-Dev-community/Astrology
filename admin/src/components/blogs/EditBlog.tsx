@@ -353,13 +353,18 @@ const EditBlog = () => {
     },
   });
 
-  const { data: categories } = useQuery({
+  const {
+    data: { categories },
+  } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await axiosInstance.get("/categories");
+      console.log();
+
       return response;
     },
   });
+  console.log("categories", categories);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -491,16 +496,30 @@ const EditBlog = () => {
                         <SelectTrigger>
                           <SelectValue placeholder="Select a Category" />
                         </SelectTrigger>
+                        {/* <SelectContent>
+                          <SelectGroup>
+                            {categories &&
+                              categories?.map((category) => (
+                                <SelectItem
+                                  key={category._id}
+                                  value={category._id}
+                                >
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                          </SelectGroup>
+                        </SelectContent> */}
                         <SelectContent>
                           <SelectGroup>
-                            {categories?.map((category) => (
-                              <SelectItem
-                                key={category._id}
-                                value={category._id}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))}
+                            {Array.isArray(categories) &&
+                              categories.map((category) => (
+                                <SelectItem
+                                  key={category._id}
+                                  value={category._id}
+                                >
+                                  {category.name}
+                                </SelectItem>
+                              ))}
                           </SelectGroup>
                         </SelectContent>
                       </Select>

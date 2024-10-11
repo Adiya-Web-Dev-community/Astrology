@@ -376,7 +376,7 @@ const PoojaForm = ({
         />
         <FormField
           control={form.control}
-          name="astrologerId"
+          name="astrologer"
           rules={{ required: "Astrologer is required" }}
           render={({ field }) => (
             <FormItem>
