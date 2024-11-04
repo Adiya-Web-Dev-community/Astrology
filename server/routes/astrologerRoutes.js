@@ -15,9 +15,10 @@ const {
 
 // Public routes
 router.get("/", getAstrologers);
+router.get("/top-rated", getTopRatedAstrologers);
 router.get("/:id", getAstrologer);
 router.get("/specialty/:categoryId", getAstrologersBySpecialty);
-router.get("/top-rated", getTopRatedAstrologers);
+// router.get("/top-rated", getTopRatedAstrologers);
 
 // Protected routes (require authentication)
 router.use(protect);
