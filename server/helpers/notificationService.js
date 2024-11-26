@@ -1,5 +1,5 @@
 const admin = require('../firebase/firebaseAdmin');
-const { Notification } = require('../models/notificationModel');
+const Notification  = require('../models/notificationModel');
 
 // Send FCM Message
 exports.sendMessage = async (title, message, fcmToken) => {
