@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-server/astrovendor-firebase-adminsdk.json
+
 
 # Editor directories and files
 .vscode/*
