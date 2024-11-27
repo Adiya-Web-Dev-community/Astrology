@@ -24,6 +24,15 @@ const supportSchema = new mongoose.Schema(
       ],
       default: "General Inquiry",
     },
+    supportType: {
+      type: String,
+      required: true,
+      enum: [
+        "Contact Support",
+        "Feedback",
+      ],
+      default: "Contact Support",
+    },
     message: {
       type: String,
       required: true,

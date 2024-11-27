@@ -8,7 +8,7 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 // POST: Create a new support request
-router.post("/create-support", createSupportRequest);
+router.post("/create-support", protect,createSupportRequest);
 
 // GET: Get all support requests
 router.get("/get-all-supports", getSupportRequests);
