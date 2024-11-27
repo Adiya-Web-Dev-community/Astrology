@@ -6,7 +6,7 @@ exports.createGemstoneQuery = async (req, res) => {
     const { userId, gemstoneId, queryType, message } = req.body;
 
     const newQuery = new GemstoneQuery({
-      userId,
+      userId:req.user._id,
       gemstoneId,
       queryType,
       message,

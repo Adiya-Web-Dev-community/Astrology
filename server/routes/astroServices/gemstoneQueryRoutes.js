@@ -1,20 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const gemstoneQueryController = require("../../controllers/astroServices/gemstoneQueryController");
+const { protect } = require("../../middleware/authMiddleware");
+
+
 
 // Create a new query
-router.post("/", gemstoneQueryController.createGemstoneQuery);
+router.post("/gemstone-query",protect, gemstoneQueryController.createGemstoneQuery);
 
 // Get all queries
-router.get("/", gemstoneQueryController.getAllQueries);
+router.get("/get-all-queries", gemstoneQueryController.getAllQueries);
 
 // Get queries by user
-router.get("/user/:userId", gemstoneQueryController.getQueriesByUser);
+router.get("/query/:userId", gemstoneQueryController.getQueriesByUser);
 
 // Update query status or respond
-router.patch("/:id", gemstoneQueryController.updateQuery);
+router.patch("/query/:id", gemstoneQueryController.updateQuery);
 
 // Delete a query
-router.delete("/:id", gemstoneQueryController.deleteQuery);
+router.delete("/query/:id", gemstoneQueryController.deleteQuery);
 
 module.exports = router;
