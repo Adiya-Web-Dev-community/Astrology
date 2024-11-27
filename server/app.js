@@ -15,6 +15,7 @@ const consultationRoutes = require('./routes/consultationRoutes');
 const walletRoutes = require('./routes/walletRoutes.js');
 const notificationRoutes = require('./routes/notificationRoutes');
 const thoughtRoutes = require('./routes/thoughtRoutes.js');
+const plansRoutes = require('./routes/plansRoutes');
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
 const cors = require("cors");
@@ -47,6 +48,7 @@ app.use('/api/consultations', consultationRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/thoughts', thoughtRoutes);
+app.use('/api/plans', plansRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
