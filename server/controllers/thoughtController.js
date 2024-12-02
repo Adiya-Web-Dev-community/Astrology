@@ -164,7 +164,7 @@ exports.updateToLatestThought = async (req, res) => {
         const updatedThought = await Thought.findByIdAndUpdate(
             thoughtId,
             { createdAt: new Date() }, // Set `createdAt` to the current timestamp
-            { new: true } // Return the updated document
+            { new: true, timestamps: false } // Return the updated document
         );
 
         if (!updatedThought) {

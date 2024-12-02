@@ -124,6 +124,30 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "thoughts",
+            lazy: async () => ({
+              Component: (await import("@/components/thoughtsManagement/ThoughtManagement.tsx")).default,
+            }),
+          },
+          {
+            path: "plans-management",
+            lazy: async () => ({
+              Component: (await import("@/components/PlanManagement/PlanManagement.tsx")).default,
+            }),
+          },
+          {
+            path: "gem-stone-query",
+            lazy: async () => ({
+              Component: (await import("@/components/GemstoneQueryManagement/GemstoneQueryManagement.tsx")).default,
+            }),
+          },
+          {
+            path: "banner",
+            lazy: async () => ({
+              Component: (await import("@/components/banner/BannerManagement.tsx")).default,
+            }),
+          },
+          {
             path: "blogs/create",
             lazy: async () => ({
               Component: (await import("@/components/blogs/AddBlog.tsx"))

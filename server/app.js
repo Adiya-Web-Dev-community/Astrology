@@ -16,6 +16,10 @@ const walletRoutes = require('./routes/walletRoutes.js');
 const notificationRoutes = require('./routes/notificationRoutes');
 const thoughtRoutes = require('./routes/thoughtRoutes.js');
 const plansRoutes = require('./routes/plansRoutes');
+const bannerRoutes = require('./routes/bannerRoutes.js');
+const navgrahRoutes = require('./routes/navgrahRoutes.js');
+const horoscopeRoutes = require('./routes/horoscopeRoutes.js');
+const astrologerRequestRoutes = require('./routes/astrologerRequestRoutes.js');
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
 const cors = require("cors");
@@ -49,6 +53,10 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/thoughts', thoughtRoutes);
 app.use('/api/plans', plansRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/navgrah', navgrahRoutes);
+app.use('/api/horoscopes', horoscopeRoutes);
+app.use('/api/astrologer-requests', astrologerRequestRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

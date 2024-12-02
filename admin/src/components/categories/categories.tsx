@@ -435,46 +435,6 @@
 
 // export default CategoryManagement;
 //======================================================
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Import Avatar components
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Pencil, Trash2 } from "lucide-react";
-import { Layout } from "../custom/layout";
-import { Search } from "../search";
-import ThemeSwitch from "../theme-switch";
-import { UserNav } from "../user-nav";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useDispatch, useSelector } from "react-redux";
-
-import axiosInstance from "@/api/client";
-import { Input } from "@/components/ui/input"; // Importing the Input component
-import { setCategories } from "@/store/features/category/categorySlice";
-import uploadImage from "@/firebase/image";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 
 // const CategoryManagement = () => {
 //   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -723,6 +683,48 @@ import {
 //     </Layout>
 //   );
 // };
+
+
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Import Avatar components
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Pencil, Trash2 } from "lucide-react";
+import { Layout } from "../custom/layout";
+import { Search } from "../search";
+import ThemeSwitch from "../theme-switch";
+import { UserNav } from "../user-nav";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+
+import axiosInstance from "@/api/client";
+import { Input } from "@/components/ui/input"; // Importing the Input component
+import { setCategories } from "@/store/features/category/categorySlice";
+import uploadImage from "@/firebase/image";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const CategoryManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

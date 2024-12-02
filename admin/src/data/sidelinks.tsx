@@ -187,6 +187,30 @@ export const sidelinks: SideLink[] = [
     icon: <IconUsers size={18} />,
   },
   {
+    title: "Thoughts",
+    label: "",
+    href: "/thoughts",
+    icon: <IconUsers size={18} />,
+  },
+  {
+    title: "Plans Management",
+    label: "",
+    href: "/plans-management",
+    icon: <IconUsers size={18} />,
+  },
+  {
+    title: "Gem Stone Query",
+    label: "",
+    href: "/gem-stone-query",
+    icon: <IconUsers size={18} />,
+  },
+  {
+    title: "Banner",
+    label: "",
+    href: "/banner",
+    icon: <IconUsers size={18} />,
+  },
+  {
     title: "Astro Services",
     label: "",
     href: "/astro-services",
