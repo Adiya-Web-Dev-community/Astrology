@@ -41,9 +41,9 @@ router.put('/enable-disable-chat', protect, authorize('astrologer'), enableDisab
 router.put('/enable-disable-call', protect, authorize('astrologer'), enableDisableCall);
 // Admin only routes
 // router.post("/", authorize("admin"), createAstrologer);
-router.post("/create", authorize("admin"), createAstrologerWithAccount);
-router.put("/:id", authorize("admin"), updateAstrologer);
-router.delete("/:id", authorize("admin"), deleteAstrologer);
+router.post("/create",protect, authorize("admin"), createAstrologerWithAccount);
+router.put("/:id", protect,authorize("admin"), updateAstrologer);
+router.delete("/:id", protect,authorize("admin"), deleteAstrologer);
 
 // Astrologer only routes
 router.put(

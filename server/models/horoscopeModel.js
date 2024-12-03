@@ -30,6 +30,9 @@ const horoscopeSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  Image: {
+    type: String,
+  },
 
 }, { timestamps: true });
 

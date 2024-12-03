@@ -142,6 +142,12 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "astroger-request",
+            lazy: async () => ({
+              Component: (await import("@/components/AstrologerRequestManagement/AstrologerRequestManagement.tsx")).default,
+            }),
+          },
+          {
             path: "banner",
             lazy: async () => ({
               Component: (await import("@/components/banner/BannerManagement.tsx")).default,

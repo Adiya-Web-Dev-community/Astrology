@@ -9,7 +9,7 @@ const Astrologer = require("../models/astrologerModel");
 
 exports.requestOTP = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email,fcm } = req.body;
 
     // Find user by email without password, firstName, and lastName
     let user = await User.findOne({ email });
@@ -25,6 +25,10 @@ exports.requestOTP = async (req, res) => {
       code: otp,
       expiresAt: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
     };
+    // Save or update FCM token
+    if (fcm) {
+      user.fcm = fcm;
+    }
     await user.save();
 
     // Define the HTML email content

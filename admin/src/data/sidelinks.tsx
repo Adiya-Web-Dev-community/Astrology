@@ -216,6 +216,12 @@ export const sidelinks: SideLink[] = [
     href: "/astro-services",
     icon: <BoxIcon size={18} />,
   },
+  {
+    title: "Astrologer Request",
+    label: "",
+    href: "/astroger-request",
+    icon: <BoxIcon size={18} />,
+  },
   // {
   //   title: "Free Services",
   //   label: "",
