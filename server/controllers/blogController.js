@@ -201,6 +201,35 @@ const getBlogsByCategory = async (req, res) => {
   }
 };
 
+// Get all blog posts by category name
+const getBlogsByCategoryName = async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+
+    // Find category by name
+    const category = await Category.findOne({ name: categoryName });
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    // Find blogs by category ID
+    const blogs = await Blog.find({ category: category._id })
+      .populate("category")
+      .exec();
+
+    if (blogs.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No blogs found for this category" });
+    }
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   createBlog,
   getAllBlogs,
@@ -209,4 +238,5 @@ module.exports = {
   deleteBlog,
   getBlogsByCategory,
   getBlogById,
+  getBlogsByCategoryName
 };

@@ -19,13 +19,24 @@ const plansRoutes = require('./routes/plansRoutes');
 const bannerRoutes = require('./routes/bannerRoutes.js');
 const navgrahRoutes = require('./routes/navgrahRoutes.js');
 const horoscopeRoutes = require('./routes/horoscopeRoutes.js');
+const chatRoutes = require('./routes/chatRoutes.js');
 const astrologerRequestRoutes = require('./routes/astrologerRequestRoutes.js');
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
 const cors = require("cors");
+const { createServer } = require("http"); 
+const { Server } = require("socket.io");
+const chatModel = require("./models/chatModel.js");
+const { socketAuthenticator } = require("./middleware/authMiddleware.js");
 
 const app = express();
 
+const httpServer = createServer(app); 
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", 
+  },
+});
 // Connect to database
 connectDB();
 
@@ -57,6 +68,7 @@ app.use('/api/banners', bannerRoutes);
 app.use('/api/navgrah', navgrahRoutes);
 app.use('/api/horoscopes', horoscopeRoutes);
 app.use('/api/astrologer-requests', astrologerRequestRoutes);
+app.use("/api/chats", chatRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -70,4 +82,33 @@ app.get("/", async (req, res) => {
   res.send("ASTROLOGY APP");
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Middleware for WebSocket Authentication
+io.use((socket, next) => {
+  socketAuthenticator(socket, next);
+});
+
+io.on("connection", (socket) => {
+  // console.log(`User connected: ${socket.user.id}`);
+
+  // Handle incoming messages
+  socket.on("sendMessage", async ({ sessionId, message }) => {
+    const chat = new chatModel({ sessionId, sender: socket.user.id, message });
+    await chat.save();
+
+    io.to(sessionId).emit("receiveMessage", chat);
+  });
+
+  // Join a chat session room
+  socket.on("joinSession", (sessionId) => {
+    socket.join(sessionId);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.user.id}`);
+  });
+});
+
+// Replace app.listen with httpServer.listen
+httpServer.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);

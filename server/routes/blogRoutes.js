@@ -10,4 +10,7 @@ router.put("/:id", blogController.updateBlog);
 router.delete("/:id", blogController.deleteBlog);
 router.get("/category/:categoryId", blogController.getBlogsByCategory);
 
+router.get("/category/name/:categoryName", blogController.getBlogsByCategoryName);
+
+
 module.exports = router;

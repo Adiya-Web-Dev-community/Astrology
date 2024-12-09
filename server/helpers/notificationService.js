@@ -20,6 +20,28 @@ exports.sendMessage = async (title, message, fcmToken) => {
   }
 };
 
+// exports.sendMessage = async (title, message, fcmToken, firebaseAdmin) => {
+//   console.log("TOKEN_FROM sendMessage",fcmToken);
+//   console.log("ROLE FROM sendMessage",firebaseAdmin);
+  
+//   const messagePayload = {
+//     notification: {
+//       title,
+//       body: message,
+//     },
+//     token: fcmToken,
+//   };
+
+//   try {
+//     const response = await firebaseAdmin.messaging().send(messagePayload);
+//     console.log("Notification sent successfully:", response);
+//   } catch (error) {
+//     console.error("Error sending notification:", error);
+//     throw error;
+//   }
+// };
+
+
 // Mark Notification as Read
 exports.markAsRead = async (notificationId) => {
   try {

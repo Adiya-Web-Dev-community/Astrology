@@ -60,3 +60,41 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+
+exports.socketAuthenticator = async (socket, next) => {
+  try {
+    // Get the token from socket handshake auth
+    const token = socket.handshake.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return next(new Error('Authentication error: No token provided'));
+    }
+
+    // Verify the token
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+
+    // Find the user by ID from the decoded token
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return next(new Error('Authentication error: User not found'));
+    }
+
+    // Attach the user to the socket
+    socket.user = user;
+
+    next();
+  } catch (error) {
+    console.error('Socket authentication error:', error);
+    
+    if (error.name === 'JsonWebTokenError') {
+      return next(new Error('Authentication error: Invalid token'));
+    }
+    
+    if (error.name === 'TokenExpiredError') {
+      return next(new Error('Authentication error: Token expired'));
+    }
+
+    return next(new Error('Authentication error'));
+  }
+};
