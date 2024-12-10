@@ -3,18 +3,29 @@ const { Schema } = mongoose;
 
 const BlogSchema = new Schema(
   {
-    title: { type: String, required: true },
+    english: {
+      title: { type: String, required: true },
+      slug: { type: String, required: true, unique: true },
+      content: { type: String, required: true },
+      excerpt: { type: String },
+      metaDescription: { type: String },
+      keywords: [{ type: String }],
+    },
+    hindi: {
+      title: { type: String, required: true },
+      slug: { type: String, required: true, unique: true },
+      content: { type: String, required: true },
+      excerpt: { type: String },
+      metaDescription: { type: String },
+      keywords: [{ type: String }],
+    },
     slug: { type: String, required: true, unique: true },
     thumbnail: { type: String, required: true },
-    content: { type: String, required: true },
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
-    }, // Reference to Category
-    excerpt: { type: String },
-    metaDescription: { type: String },
-    keywords: [{ type: String }],
+    },
   },
   { timestamps: true }
 );

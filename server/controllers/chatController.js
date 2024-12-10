@@ -1,5 +1,6 @@
 const Chat = require("../models/chatModel");
 const Session = require("../models/sessionModel");
+const userModel = require("../models/userModel");
 
 
 // exports.getChatHistory = async (req, res, next) => {
@@ -84,13 +85,22 @@ exports.updateChatDetails = async (req, res, next) => {
 
 
 exports.createChatMessage = async (req, res, next) => {
-  const { sessionId, message } = req.body;
+  const { sessionId,receiver, message } = req.body;
   const sender = req.user._id; // Assuming authenticated user's ID is the sender
 
   try {
+      // Fetch the receiver user by ID
+      const user = await userModel.findById(receiver);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "Receiver user not found",
+        });
+      }
     const newChat = await Chat.create({
       sessionId,
       sender,
+      receiver:user._id,
       message,
     });
 
