@@ -1,3 +1,4 @@
+const { updateSessionActivity } = require("../helpers/updateSessionActivity");
 const Chat = require("../models/chatModel");
 const Session = require("../models/sessionModel");
 const userModel = require("../models/userModel");
@@ -89,6 +90,16 @@ exports.createChatMessage = async (req, res, next) => {
   const sender = req.user._id; // Assuming authenticated user's ID is the sender
 
   try {
+    const messageSize = message.length / 1024;
+    const updateResult = await updateSessionActivity(sessionId, sender, messageSize);
+
+    if (!updateResult.success) {
+      return res.status(500).json({ message: "Failed to update session." });
+    }
+  
+    if (updateResult.isPlanExceeded) {
+      return res.status(403).json({ message: "Plan limits exceeded." });
+    }
       // Fetch the receiver user by ID
       const user = await userModel.findById(receiver);
       if (!user) {

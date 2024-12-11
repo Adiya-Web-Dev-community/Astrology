@@ -12,5 +12,7 @@ router.get("/category/:categoryId", blogController.getBlogsByCategory);
 
 router.get("/category/name/:categoryName", blogController.getBlogsByCategoryName);
 
+router.get("/recent", blogController.getRecentPosts);
+
 
 module.exports = router;

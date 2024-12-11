@@ -444,6 +444,27 @@ const getBlogsByCategoryName = async (req, res) => {
   }
 };
 
+// Get recent blog posts
+const getRecentPosts = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 5; // Default limit is 5
+
+    const recentBlogs = await Blog.find()
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+      .limit(limit) // Limit the number of recent posts
+      .populate("category") // Populate the category details
+      .exec();
+
+    res.status(200).json({
+      success: true,
+      data: recentBlogs,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 module.exports = {
   createBlog,
   getAllBlogs,
@@ -453,4 +474,5 @@ module.exports = {
   deleteBlog,
   getBlogsByCategory,
   getBlogsByCategoryName,
+  getRecentPosts
 };

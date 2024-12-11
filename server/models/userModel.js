@@ -68,7 +68,17 @@ const UserSchema = new mongoose.Schema(
     },
     fcm:{
       type:String
-    }
+    },
+    activePlan: {
+      planId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Plan",
+      },
+      startDate: Date,
+      endDate: Date,
+      remainingMessages: { type: Number, default: 0 },
+      remainingSize: { type: Number, default: 0 }, // KB
+    },
   },
   { timestamps: true }
 );

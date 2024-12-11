@@ -51,6 +51,9 @@ const sessionSchema = new mongoose.Schema(
     feedback: {
       type: String,
     },
+    totalMessages: { type: Number, default: 0 }, // Messages sent in this session
+    totalSize: { type: Number, default: 0 }, // Total data size in KB
+    isPlanExceeded: { type: Boolean, default: false }, // Track if limits are exceeded
   },
   { timestamps: true }
 );
