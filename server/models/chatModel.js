@@ -5,7 +5,7 @@ const chatSchema = new mongoose.Schema(
     sessionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
-      required: true,
+      // required: true,
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,

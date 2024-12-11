@@ -149,13 +149,13 @@ io.on('connection', (socket) => {
   // Join room
   socket.on('join_room', (roomId) => {
       socket.join(roomId);
-      console.log(`User ${socket.id} joined room ${roomId}`);
+      console.log(`Socket ${socket.id} joined users room-id ${roomId}`);
   });
 
   // Handle message
   socket.on("sendMessage", async ({ roomId,sessionId,receiver, message }) => {
-    if (!sessionId || !receiver || !message) {
-      return console.error("Invalid sessionId, receiver, or message");
+    if ( !receiver || !message) {
+      return console.error("Invalid receiverId, or message");
     }
     try {
       const chat = new chatModel({

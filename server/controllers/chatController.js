@@ -51,8 +51,8 @@ const userModel = require("../models/userModel");
 // Fetch chat history
 exports.getChatHistory = async (req, res) => {
   try {
-    const { sessionId } = req.params;
-    const chatHistory = await Chat.find({ sessionId }).sort({ createdAt: 1 });
+    const userId = req.user._id;
+    const chatHistory = await Chat.find({ sender:userId }).sort({ createdAt: 1 });
     res.status(200).json({ success: true, data: chatHistory });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error fetching chat history" });
