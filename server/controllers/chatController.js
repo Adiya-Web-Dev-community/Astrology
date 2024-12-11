@@ -49,15 +49,37 @@ const userModel = require("../models/userModel");
 // };
 
 // Fetch chat history
+// exports.getChatHistory = async (req, res) => {
+//   try {
+//     const {receiver}=req.body;
+//     const userId = req.user._id;
+//     const chatHistory = await Chat.find({ sender:userId, receiver}).sort({ createdAt: 1 });
+//     res.status(200).json({ success: true, data: chatHistory });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: "Error fetching chat history" });
+//   }
+// };
+
 exports.getChatHistory = async (req, res) => {
   try {
+    const { receiver } = req.body;
     const userId = req.user._id;
-    const chatHistory = await Chat.find({ sender:userId }).sort({ createdAt: 1 });
+
+    // Fetch chat history where the user is either the sender or receiver
+    const chatHistory = await Chat.find({
+      $or: [
+        { sender: userId, receiver },
+        { sender: receiver, receiver: userId }
+      ]
+    }).sort({ createdAt: 1 });
+
     res.status(200).json({ success: true, data: chatHistory });
   } catch (error) {
+    console.error("Error fetching chat history:", error);
     res.status(500).json({ success: false, message: "Error fetching chat history" });
   }
 };
+
 
 
 exports.updateChatDetails = async (req, res, next) => {
