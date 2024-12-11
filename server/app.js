@@ -27,7 +27,7 @@ const cors = require("cors");
 const { createServer } = require("http"); 
 const { Server } = require("socket.io");
 const chatModel = require("./models/chatModel.js");
-const { socketAuthenticator } = require("./middleware/authMiddleware.js");
+const { protect,socketAuthenticator  } = require("./middleware/authMiddleware.js");
 
 const app = express();
 
@@ -88,19 +88,72 @@ io.use((socket, next) => {
 });
 
 
-io.on("connection", (socket) => {
-  console.log(`Socket-Id: ${socket.id}`);
-  console.log(`User connected: ${socket.user.email}`);
-  // console.log(`User: ${socket.user}`);
+// io.on("connection", (socket) => {
+//   console.log(`Socket-Id: ${socket.id}`);
+//   console.log(`User connected: ${socket.user.email}`);
+//   // console.log(`User: ${socket.user}`);
 
-  // Join a chat session room
-  socket.on("joinSession", (sessionId) => {
-    socket.join(sessionId);
-    console.log(`User ${socket.user.id} joined session ${sessionId}`);
+//   // Join a chat session room
+//   socket.on("joinSession", (sessionId) => {
+//     socket.join(sessionId);
+//     console.log(`User ${socket.user.email} joined session ${sessionId}`);
+//   });
+
+//   // Handle sending messages
+//   socket.on("sendMessage", async ({ sessionId,receiver, message }) => {
+//     if (!sessionId || !receiver || !message) {
+//       return console.error("Invalid sessionId, receiver, or message");
+//     }
+//     try {
+//       const chat = new chatModel({
+//         sessionId,
+//         sender: socket.user.id,
+//         receiver,
+//         message,
+//       });
+//       await chat.save();
+
+//       // Broadcast the message to all users in the session room
+//       io.to(sessionId).emit("receiveMessage", chat);
+//     } catch (error) {
+//       console.error("Error saving chat message:", error);
+//     }
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log(`User disconnected: ${socket.user.email}`);
+//   });
+// });
+
+// Generate room ID
+const generateRoomId = (user1, user2) => {
+  return [user1, user2].sort().join('_');
+};
+
+// Endpoint to get or create room
+app.post('/api/getRoomId',protect, (req, res) => {
+  const { recipientId } = req.body;
+
+  if (!recipientId) {
+      return res.status(400).json({ success: false, message: 'User IDs are required' });
+  }
+const userId=req.user._id
+  const roomId = generateRoomId(userId, recipientId);
+  res.status(200).json({ success: true, roomId });
+});
+
+// Socket.IO events
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  // Join room
+  socket.on('join_room', (roomId) => {
+      socket.join(roomId);
+      console.log(`User ${socket.id} joined room ${roomId}`);
   });
 
-  // Handle sending messages
-  socket.on("sendMessage", async ({ sessionId,receiver, message }) => {
+  // Handle message
+  socket.on("sendMessage", async ({ roomId,sessionId,receiver, message }) => {
     if (!sessionId || !receiver || !message) {
       return console.error("Invalid sessionId, receiver, or message");
     }
@@ -114,14 +167,15 @@ io.on("connection", (socket) => {
       await chat.save();
 
       // Broadcast the message to all users in the session room
-      io.to(sessionId).emit("receiveMessage", chat);
+      io.to(roomId).emit("receiveMessage", chat);
     } catch (error) {
       console.error("Error saving chat message:", error);
     }
   });
 
-  socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.user.email}`);
+  // Disconnect
+  socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
   });
 });
 
