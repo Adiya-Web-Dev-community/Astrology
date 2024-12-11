@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 // Routes
-router.get("/:sessionId",protect, getChatHistory); // Get chat history for astrologer or client
+router.get("/get-chats",protect, getChatHistory); // Get chat history for astrologer or client
 router.post("/", protect,validatePlanAndWallet, createChatMessage); // Create a new chat message
 router.put("/:chatId", updateChatDetails); // Update earnings, payment, and status
 
