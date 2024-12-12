@@ -4,76 +4,106 @@ const Session = require("../models/sessionModel");
 const userModel = require("../models/userModel");
 
 
-// exports.getChatHistory = async (req, res, next) => {
+// exports.getChatHistory = async (req, res) => {
 //   try {
-//     const { limit = 10, offset = 0, sessionType } = req.query;
-//     const filter = {};
+//     const { receiver } = req.body;
+//     const userId = req.user._id;
 
-//     // Check user role and set filter accordingly
-//     if (req.user.role === "astrologer") {
-//       filter["sessionId.astrologerId"] = req.user._id;
-//     } else if (req.user.role === "customer") {
-//       filter["sessionId.clientId"] = req.user._id;
-//     } else {
-//       return res.status(403).json({
-//         success: false,
-//         message: "User role is not authorized to access this route",
-//       });
-//     }
+//     // Fetch chat history where the user is either the sender or receiver
+//     const chatHistory = await Chat.find({
+//       $or: [
+//         { sender: userId, receiver },
+//         { sender: receiver, receiver: userId }
+//       ]
+//     }).sort({ createdAt: -1 });
 
-//     // Optionally filter by session type if provided
-//     if (sessionType) filter["sessionId.sessionType"] = sessionType;
-
-//     // Fetch chat history with session details
-//     const chatHistory = await Chat.find(filter)
-//       .populate({
-//         path: "sessionId",
-//         select: "sessionType startTime endTime chargePerMinute totalCharge status",
-//         populate: [
-//           { path: "astrologerId", select: "firstName lastName" },
-//           { path: "clientId", select: "firstName lastName" },
-//         ],
-//       })
-//       .skip(Number(offset))
-//       .limit(Number(limit))
-//       .sort({ sentAt: -1 });
-
-//     res.status(200).json({
-//       success: true,
-//       count: chatHistory.length,
-//       data: chatHistory,
-//     });
+//     res.status(200).json({ success: true, data: chatHistory });
 //   } catch (error) {
-//     res.status(500).json({ success: false, error: error.message });
+//     console.error("Error fetching chat history:", error);
+//     res.status(500).json({ success: false, message: "Error fetching chat history" });
 //   }
 // };
 
-// Fetch chat history
 // exports.getChatHistory = async (req, res) => {
 //   try {
-//     const {receiver}=req.body;
+//     const { receiver, page = 1, limit = 10 } = req.body; // Default values for page and limit
 //     const userId = req.user._id;
-//     const chatHistory = await Chat.find({ sender:userId, receiver}).sort({ createdAt: 1 });
-//     res.status(200).json({ success: true, data: chatHistory });
+
+//     // Calculate the number of documents to skip
+//     const skip = (page - 1) * limit;
+
+//     // Fetch paginated chat history
+//     const chatHistory = await Chat.find({
+//       $or: [
+//         { sender: userId, receiver },
+//         { sender: receiver, receiver: userId }
+//       ]
+//     })
+//       .sort({ createdAt: -1 }) // Sort in descending order
+//       .skip(skip)
+//       .limit(limit);
+
+//     // Count total chats between the two users
+//     const totalChats = await Chat.countDocuments({
+//       $or: [
+//         { sender: userId, receiver },
+//         { sender: receiver, receiver: userId }
+//       ]
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       data: chatHistory,
+//       pagination: {
+//         totalChats,
+//         currentPage: page,
+//         totalPages: Math.ceil(totalChats / limit),
+//       },
+//     });
 //   } catch (error) {
+//     console.error("Error fetching chat history:", error);
 //     res.status(500).json({ success: false, message: "Error fetching chat history" });
 //   }
 // };
 
 exports.getChatHistory = async (req, res) => {
   try {
-    const { receiver } = req.body;
+    const { receiver } = req.query; 
+    const page = parseInt(req.query.page, 1) || 1; 
+    const limit = parseInt(req.query.limit, 10) || 10; 
     const userId = req.user._id;
 
-    // Fetch chat history where the user is either the sender or receiver
+    
+    const skip = (page - 1) * limit;
+
+  
     const chatHistory = await Chat.find({
       $or: [
         { sender: userId, receiver },
-        { sender: receiver, receiver: userId }
+        { sender: receiver, receiver: userId },
       ]
-    }).sort({ createdAt: 1 });
+    })
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
 
-    res.status(200).json({ success: true, data: chatHistory });
+    
+    const totalChats = await Chat.countDocuments({
+      $or: [
+        { sender: userId, receiver },
+        { sender: receiver, receiver: userId },
+      ]
+    });
+
+    res.status(200).json({
+      success: true,
+      data: chatHistory,
+      pagination: {
+        totalChats,
+        currentPage: page,
+        totalPages: Math.ceil(totalChats / limit),
+      },
+    });
   } catch (error) {
     console.error("Error fetching chat history:", error);
     res.status(500).json({ success: false, message: "Error fetching chat history" });
