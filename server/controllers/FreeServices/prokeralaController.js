@@ -264,26 +264,59 @@ const handleApiRequest = async (req, res, apiCall) => {
   }
 };
 
+// exports.getTodaysPanchang = async (req, res) => {
+//   const { latitude, longitude, ayanamsa, language } = req.query;
+
+//   if (!latitude || !longitude || !ayanamsa) {
+//     return res
+//       .status(400)
+//       .json({ message: "Latitude, longitude, and ayanamsa are required" });
+//   }
+
+//   const params = {
+//     ayanamsa,
+//     coordinates: `${latitude},${longitude}`,
+//     datetime: new Date().toISOString(),
+//     la: language,
+//   };
+
+//   await handleApiRequest(req, res, () =>
+//     makeApiRequest("/astrology/panchang/advanced", params)
+//   );
+// };
+
 exports.getTodaysPanchang = async (req, res) => {
   const { latitude, longitude, ayanamsa, language } = req.query;
 
+  // Validate required parameters
   if (!latitude || !longitude || !ayanamsa) {
     return res
       .status(400)
       .json({ message: "Latitude, longitude, and ayanamsa are required" });
   }
 
+  // Construct parameters for the API request
   const params = {
     ayanamsa,
     coordinates: `${latitude},${longitude}`,
-    datetime: new Date().toISOString(),
+    datetime: new Date().toISOString(), // Current date and time in ISO format
     la: language,
   };
 
-  await handleApiRequest(req, res, () =>
-    makeApiRequest("/astrology/panchang/advanced", params)
-  );
+  try {
+    // Make the API request
+    await handleApiRequest(req, res, () =>
+      makeApiRequest("/astrology/panchang/advanced", params)
+    );
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Panchang",
+      error: error.message,
+    });
+  }
 };
+
 
 exports.getJanamKundali = async (req, res) => {
   const { latitude, longitude, ayanamsa, language } = req.query;

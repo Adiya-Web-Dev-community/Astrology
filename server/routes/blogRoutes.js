@@ -4,6 +4,7 @@ const blogController = require("../controllers/blogController");
 
 router.post("/", blogController.createBlog);
 router.get("/", blogController.getAllBlogs);
+router.get("/recent", blogController.getRecentPosts);
 router.get("/:id", blogController.getBlogById);
 router.get("/:slug", blogController.getBlogBySlug);
 router.put("/:id", blogController.updateBlog);
@@ -12,7 +13,7 @@ router.get("/category/:categoryId", blogController.getBlogsByCategory);
 
 router.get("/category/name/:categoryName", blogController.getBlogsByCategoryName);
 
-router.get("/recent", blogController.getRecentPosts);
+
 
 
 module.exports = router;

@@ -104,10 +104,30 @@ const deleteFeedback = async (req, res) => {
   }
 };
 
+const getTopRatedFeedback = async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 5; // Default limit is 5
+  
+      // Fetch feedbacks sorted by rating in descending order
+      const feedbacks = await Feedback.find()
+        .sort({ rating: -1 }) // Sort by highest rating
+        .limit(limit) // Limit the number of results
+        .populate("userId", "firstName lastName profilePic email") // Populate user details
+        .exec();
+  
+      res.status(200).json({ success: true, data: feedbacks });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+  
+
+
 module.exports = {
   createFeedback,
   getAllFeedback,
   getFeedbackById,
   updateFeedback,
   deleteFeedback,
+  getTopRatedFeedback
 };
