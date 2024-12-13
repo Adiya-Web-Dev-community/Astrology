@@ -21,4 +21,7 @@ router.get(
   reviewController.getAstrologerAverageRating
 );
 
+router.get("/astrologers/top-rated", reviewController.getTopRatedAstrologers);
+
+
 module.exports = router;

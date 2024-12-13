@@ -20,6 +20,7 @@ const bannerRoutes = require('./routes/bannerRoutes.js');
 const navgrahRoutes = require('./routes/navgrahRoutes.js');
 const horoscopeRoutes = require('./routes/horoscopeRoutes.js');
 const chatRoutes = require('./routes/chatRoutes.js');
+const feedbackRoutes = require('./routes/feedbackRoutes.js');
 const astrologerRequestRoutes = require('./routes/astrologerRequestRoutes.js');
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
@@ -69,6 +70,7 @@ app.use('/api/navgrah', navgrahRoutes);
 app.use('/api/horoscopes', horoscopeRoutes);
 app.use('/api/astrologer-requests', astrologerRequestRoutes);
 app.use("/api/chats", chatRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

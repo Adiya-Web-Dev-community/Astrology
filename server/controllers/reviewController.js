@@ -163,3 +163,89 @@ exports.getAstrologerAverageRating = async (req, res) => {
       .json({ message: "Error fetching average rating", error: error.message });
   }
 };
+
+
+// exports.getTopRatedAstrologers = async (req, res) => {
+//   try {
+//     const topRatedAstrologers = await Review.aggregate([
+//       {
+//         $group: {
+//           _id: "$astrologer",
+//           averageRating: { $avg: "$rating" },
+//           totalReviews: { $sum: 1 },
+//         },
+//       },
+//       {
+//         $sort: { averageRating: -1, totalReviews: -1 },
+//       },
+//       {
+//         $limit: 1, // Change this number to fetch more than one astrologer
+//       },
+//     ]);
+
+//     if (!topRatedAstrologers.length) {
+//       return res.status(404).json({ message: "No astrologers found" });
+//     }
+
+//     // Populate astrologer details for the top-rated astrologer(s)
+//     const populatedAstrologers = await Astrologer.find({
+//       _id: { $in: topRatedAstrologers.map((item) => item._id) },
+//     }).select("name profilePic bio"); // Adjust fields as per your schema
+
+//     res.status(200).json(populatedAstrologers);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching top-rated astrologers", error: error.message });
+//   }
+// };
+
+
+exports.getTopRatedAstrologers = async (req, res) => {
+  try {
+    const topRatedAstrologers = await Review.aggregate([
+      {
+        $group: {
+          _id: "$astrologer",
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { averageRating: -1, totalReviews: -1 },
+      },
+      {
+        $limit: 5, // Adjust the number to fetch multiple top astrologers
+      },
+    ]);
+
+    if (!topRatedAstrologers.length) {
+      return res.status(404).json({ message: "No astrologers found" });
+    }
+
+    // Fetch detailed astrologer information and merge with aggregation results
+    const astrologerIds = topRatedAstrologers.map((item) => item._id);
+    const astrologers = await Astrologer.find({ _id: { $in: astrologerIds } })
+      .select("name profilePic bio")
+      .lean();
+
+    // Merge astrologer details with aggregation data
+    const result = topRatedAstrologers.map((item) => {
+      const astrologer = astrologers.find(
+        (astro) => astro._id.toString() === item._id.toString()
+      );
+      return {
+        astrologer: astrologer || {},
+        averageRating: item.averageRating,
+        totalReviews: item.totalReviews,
+      };
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching top-rated astrologers",
+      error: error.message,
+    });
+  }
+};

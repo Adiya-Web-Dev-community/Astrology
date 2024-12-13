@@ -19,7 +19,7 @@ const sessionSchema = new mongoose.Schema(
     },
     startTime: {
       type: Date,
-      required: true,
+      // required: true,
     },
     endTime: {
       type: Date,
@@ -29,7 +29,7 @@ const sessionSchema = new mongoose.Schema(
     },
     chargePerMinute: {
       type: Number,
-      required: true, // Astrologer's rate per minute
+      // required: true, // Astrologer's rate per minute
     },
     totalCharge: {
       type: Number,
