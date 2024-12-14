@@ -16,9 +16,7 @@ exports.protect = async (req, res, next) => {
   console.log(token);
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Not authorized to access this route" });
+    return res.status(401).json({ success: false, message: "Not authorized to access this route" });
   }
   try {
     console.log(token);
@@ -34,16 +32,11 @@ exports.protect = async (req, res, next) => {
     console.log(req.user);
 
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authorized to access this route",
-      });
+      return res.status(401).json({ success: false, message: "Not authorized to access this route", });
     }
     next();
   } catch (error) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Not authorized to access this route" });
+    return res.status(401).json({ success: false, message: "Not authorized to access this route" });
   }
 };
 
@@ -52,10 +45,7 @@ exports.authorize = (...roles) => {
     console.log(req.user.role);
 
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "User role is not authorized to access this route",
-      });
+      return res.status(403).json({ success: false, message: "User role is not authorized to access this route", });
     }
     next();
   };
@@ -86,11 +76,11 @@ exports.socketAuthenticator = async (socket, next) => {
     next();
   } catch (error) {
     console.error('Socket authentication error:', error);
-    
+
     if (error.name === 'JsonWebTokenError') {
       return next(new Error('Authentication error: Invalid token'));
     }
-    
+
     if (error.name === 'TokenExpiredError') {
       return next(new Error('Authentication error: Token expired'));
     }

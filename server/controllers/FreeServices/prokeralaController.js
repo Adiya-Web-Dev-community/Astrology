@@ -243,8 +243,7 @@ const makeApiRequest = async (endpoint, params) => {
     console.error(`Error fetching data from ${endpoint}:`, error.message);
     if (error.response) {
       throw new Error(
-        `API Error: ${error.response.status} - ${
-          error.response.data.message || "Unknown error"
+        `API Error: ${error.response.status} - ${error.response.data.message || "Unknown error"
         }`
       );
     }

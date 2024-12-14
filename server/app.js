@@ -25,17 +25,18 @@ const astrologerRequestRoutes = require('./routes/astrologerRequestRoutes.js');
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
 const cors = require("cors");
-const { createServer } = require("http"); 
+const { createServer } = require("http");
 const { Server } = require("socket.io");
 const chatModel = require("./models/chatModel.js");
-const { protect,socketAuthenticator  } = require("./middleware/authMiddleware.js");
+const { protect, socketAuthenticator } = require("./middleware/authMiddleware.js");
+const enquiryRouter = require("./routes/enquiry.js");
 
 const app = express();
 
-const httpServer = createServer(app); 
+const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", 
+    origin: "*",
   },
 });
 // Connect to database
@@ -71,6 +72,7 @@ app.use('/api/horoscopes', horoscopeRoutes);
 app.use('/api/astrologer-requests', astrologerRequestRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/enquiry", enquiryRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -133,13 +135,13 @@ const generateRoomId = (user1, user2) => {
 };
 
 // Endpoint to get or create room
-app.post('/api/getRoomId',protect, (req, res) => {
+app.post('/api/getRoomId', protect, (req, res) => {
   const { recipientId } = req.body;
 
   if (!recipientId) {
-      return res.status(400).json({ success: false, message: 'User IDs are required' });
+    return res.status(400).json({ success: false, message: 'User IDs are required' });
   }
-const userId=req.user._id
+  const userId = req.user._id
   const roomId = generateRoomId(userId, recipientId);
   res.status(200).json({ success: true, roomId });
 });
@@ -150,13 +152,13 @@ io.on('connection', (socket) => {
 
   // Join room
   socket.on('join_room', (roomId) => {
-      socket.join(roomId);
-      console.log(`Socket ${socket.id} joined users room-id ${roomId}`);
+    socket.join(roomId);
+    console.log(`Socket ${socket.id} joined users room-id ${roomId}`);
   });
 
   // Handle message
-  socket.on("sendMessage", async ({ roomId,sessionId,receiver, message }) => {
-    if ( !receiver || !message) {
+  socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
+    if (!receiver || !message) {
       return console.error("Invalid receiverId, or message");
     }
     try {
@@ -177,7 +179,7 @@ io.on('connection', (socket) => {
 
   // Disconnect
   socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
+    console.log('User disconnected:', socket.id);
   });
 });
 

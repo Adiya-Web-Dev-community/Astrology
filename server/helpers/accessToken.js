@@ -15,9 +15,7 @@ exports.getAccessToken = async () => {
   try {
     const response = await fetch(tokenUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded", },
       body: new URLSearchParams({
         grant_type: "client_credentials",
         client_id: clientId,
