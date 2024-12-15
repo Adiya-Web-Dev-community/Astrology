@@ -22,6 +22,8 @@ exports.createHoroscope = async (req, res) => {
 
 // Get all horoscopes
 exports.getAllHoroscopes = async (req, res) => {
+  console.log("Get all horoscopes");
+
   try {
     const horoscopes = await Horoscope.find().populate('createdBy', 'name'); // Optionally populate astrologer's info
     res.status(200).json(horoscopes);

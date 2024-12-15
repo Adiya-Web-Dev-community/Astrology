@@ -112,8 +112,8 @@ exports.updateAstrologer = async (req, res, next) => {
 
 
 exports.updatedStatusAstro = async (req, res) => {
-  const id = req.body?.id
-  const online = req.body?.online
+  const id = req.user?._id
+  const online = req.body?.status
   try {
     const checkAstro = await User.findOne({ _id: id, role: "astrologer" })
     if (!checkAstro) {
@@ -129,7 +129,6 @@ exports.updatedStatusAstro = async (req, res) => {
   } catch (error) {
     console.log("error on updatedStatusAstro:", error);
     return res.status(500).json({ success: false, error: error.message });
-
   }
 }
 

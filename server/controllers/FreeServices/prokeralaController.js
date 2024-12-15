@@ -231,12 +231,11 @@ const BASE_URL = process.env.PROKERALA_API_BASE_URL;
 const makeApiRequest = async (endpoint, params) => {
   try {
     const token = await getAccessToken();
+    console.log("token: ", token);
+
     const response = await axios.get(`${BASE_URL}${endpoint}`, {
       params,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
     });
     return response.data;
   } catch (error) {
@@ -252,14 +251,18 @@ const makeApiRequest = async (endpoint, params) => {
 };
 
 const handleApiRequest = async (req, res, apiCall) => {
+  console.log("============================= API request =============================");
+
   try {
     const data = await apiCall();
+    console.log("========================== data ========================");
+
     res.json(data);
   } catch (error) {
+    console.log("error handleApiRequest: ", error);
+
     console.error(error);
-    res
-      .status(error.message.startsWith("API Error") ? 400 : 500)
-      .json({ message: error.message });
+    res.status(error.message.startsWith("API Error") ? 400 : 500).json({ message: error.message });
   }
 };
 
@@ -495,7 +498,10 @@ exports.getVratUpvaas = async (req, res) => {
 };
 
 exports.getDailyHoroscope = async (req, res) => {
+  console.log("========================= req,res =================================");
+
   const { sign } = req.query;
+  console.log("sign:", sign);
 
   if (!sign) {
     return res.status(400).json({ message: "Sign is required" });
@@ -509,4 +515,5 @@ exports.getDailyHoroscope = async (req, res) => {
   await handleApiRequest(req, res, () =>
     makeApiRequest("/horoscope/daily", params)
   );
+  console.log("========================= END =================================");
 };
