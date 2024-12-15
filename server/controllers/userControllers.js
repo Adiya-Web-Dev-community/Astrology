@@ -9,7 +9,7 @@ const Astrologer = require("../models/astrologerModel");
 
 exports.requestOTP = async (req, res) => {
   try {
-    const { email,fcm } = req.body;
+    const { email, fcm } = req.body;
 
     // Find user by email without password, firstName, and lastName
     let user = await User.findOne({ email });
@@ -111,15 +111,11 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user.isVerified) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Please verify your account first" });
+      return res.status(401).json({ success: false, message: "Please verify your account first" });
     }
 
     if (!user || !(await user.matchPassword(password))) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     const token = user.getSignedJwtToken({
@@ -137,14 +133,10 @@ exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
     if (user.otp.code !== otp || user.otp.expiresAt < Date.now()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired OTP" });
+      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
     // Generate a token for the user
     // const token = jwt.sign({ id: user._id }, process.env.RESET_SECRET, {
@@ -371,7 +363,7 @@ exports.resetPassword = async (req, res) => {
 
 exports.requestAstroOTP = async (req, res) => {
   try {
-    const { email,fcm } = req.body;
+    const { email, fcm } = req.body;
 
     // Find user by email without password, firstName, and lastName
     let user = await User.findOne({ email, role: "astrologer" });
