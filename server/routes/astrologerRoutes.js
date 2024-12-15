@@ -16,13 +16,14 @@ const {
   enableDisableCall,
   getAstrologerCharges,
   getAstrologerUsingToken,
-  updateAstrologerUsingToken
+  updateAstrologerUsingToken,
+  updatedStatusAstro
 } = require("../controllers/astrologerController");
 
 // Public routes
 router.get("/", getAstrologers);
 router.get("/top-rated", getTopRatedAstrologers);
-router.get('/today-stats', protect ,authorize('astrologer'), getAstrologerTodayStats);
+router.get('/today-stats', protect, authorize('astrologer'), getAstrologerTodayStats);
 // Route to get charge per minute for chat and call
 router.get('/charges', protect, authorize('astrologer'), getAstrologerCharges);
 router.get("/get-astrologer", protect, authorize("astrologer"), getAstrologerUsingToken);
@@ -41,9 +42,11 @@ router.put('/enable-disable-chat', protect, authorize('astrologer'), enableDisab
 router.put('/enable-disable-call', protect, authorize('astrologer'), enableDisableCall);
 // Admin only routes
 // router.post("/", authorize("admin"), createAstrologer);
-router.post("/create",protect, authorize("admin"), createAstrologerWithAccount);
-router.put("/:id", protect,authorize("admin"), updateAstrologer);
-router.delete("/:id", protect,authorize("admin"), deleteAstrologer);
+router.post("/create", protect, authorize("admin"), createAstrologerWithAccount);
+router.put("/:id", protect, authorize("admin"), updateAstrologer);
+router.delete("/:id", protect, authorize("admin"), deleteAstrologer);
+
+router.put('/update-online', protect, authorize("astrologer"), updatedStatusAstro)
 
 // Astrologer only routes
 router.put(

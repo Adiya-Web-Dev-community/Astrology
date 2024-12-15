@@ -66,8 +66,8 @@ const UserSchema = new mongoose.Schema(
       code: String,
       expiresAt: Date,
     },
-    fcm:{
-      type:String
+    fcm: {
+      type: String
     },
     activePlan: {
       planId: {
@@ -78,6 +78,10 @@ const UserSchema = new mongoose.Schema(
       endDate: Date,
       remainingMessages: { type: Number, default: 0 },
       remainingSize: { type: Number, default: 0 }, // KB
+    },
+    online: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

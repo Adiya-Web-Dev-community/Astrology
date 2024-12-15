@@ -14,7 +14,7 @@ router.post("/kundali-match", prokeralaController.getKundaliMatch);
 
 // Shubh Muhurat
 // router.post("/shubh-muhurat", prokeralaController.getShubhMuhurat);
-// Routes for each astrology API
+// Routes for each astrology API 
 router.post("/shubh-muhurat/choghadiya", prokeralaController.getChoghadiya);
 router.post("/shubh-muhurat/hora-timing", prokeralaController.getHoraTiming);
 router.post(
@@ -23,7 +23,7 @@ router.post(
 );
 router.post("/shubh-muhurat/rahu-kaal", prokeralaController.getRahuKaal);
 
-// Vrat and Upvaas
+// Vrat and Upvaas 
 router.post("/vrat-upvaas", prokeralaController.getVratUpvaas);
 
 // Horoscope for a specific zodiac sign

@@ -47,8 +47,30 @@ const EnquirySchema = new mongoose.Schema({
     },
     status: {
         type: String,
+        default: 'pending',
         enum: ['pending', 'ongoing', 'completed', 'cancelled']
-    }
+    },
+    partnerDetails: {
+        firstName: {
+            type: String,
+        },
+        lastName: {
+            type: String,
+        },
+        dateOfBirth: {
+            type: String,
+        },
+        timeOfBirth: {
+            type: String,
+        },
+        placeOfBirth: {
+            type: String,
+        },
+        gender: {
+            type: String,
+        },
+
+    },
     // Add any other fields you want to include here like location, date, time etc.
 }, { timestamps: true });
 

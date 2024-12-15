@@ -110,6 +110,29 @@ exports.updateAstrologer = async (req, res, next) => {
   }
 };
 
+
+exports.updatedStatusAstro = async (req, res) => {
+  const id = req.body?.id
+  const online = req.body?.online
+  try {
+    const checkAstro = await User.findOne({ _id: id, role: "astrologer" })
+    if (!checkAstro) {
+      return res.status(404).json({ success: false, message: "Astrologer not found" });
+    }
+    checkAstro.online = online
+    const result = await checkAstro.save()
+    if (!result) {
+      return res.status(404).json({ success: false, message: `Failed to ${online} Astrologer!` });
+    }
+    return res.status(200).json({ success: true, message: `Astrologer successfully ${online}.`, data: result });
+
+  } catch (error) {
+    console.log("error on updatedStatusAstro:", error);
+    return res.status(500).json({ success: false, error: error.message });
+
+  }
+}
+
 // @desc    Delete astrologer
 // @route   DELETE /api/v1/astrologers/:id
 // @access  Private/Admin
@@ -264,7 +287,7 @@ exports.createAstrologerWithAccount = async (req, res, next) => {
 // Controller to get today's earnings and chat count for an astrologer
 exports.getAstrologerTodayStats = async (req, res) => {
   try {
-    
+
     const astrologerId = req.user._id; // Get the astrologer's ID from the token
     const { todayStart, todayEnd } = getTodayDateRange();
 
@@ -306,7 +329,7 @@ exports.enableDisableChat = async (req, res) => {
 
     // Update the isChatEnabled field
     const updatedAstrologer = await Astrologer.findOneAndUpdate(
-      {userId:astrologerId},
+      { userId: astrologerId },
       { isChatEnabled },
       { new: true }
     );
@@ -329,7 +352,7 @@ exports.enableDisableCall = async (req, res) => {
 
     // Update the isCallEnabled field
     const updatedAstrologer = await Astrologer.findOneAndUpdate(
-      {userId:astrologerId},
+      { userId: astrologerId },
       { isCallEnabled },
       { new: true }
     );
@@ -349,7 +372,7 @@ exports.getAstrologerCharges = async (req, res) => {
     const astrologerId = req.user._id; // Get astrologer ID from token (authentication middleware)
 
     // Fetch the astrologer's charges
-    const astrologer = await Astrologer.findOne({userId:astrologerId}).select('chatChargePerMinute callChargePerMinute isChatEnabled isCallEnabled');
+    const astrologer = await Astrologer.findOne({ userId: astrologerId }).select('chatChargePerMinute callChargePerMinute isChatEnabled isCallEnabled');
 
     if (!astrologer) {
       return res.status(404).json({ success: false, message: 'Astrologer not found' });
@@ -374,7 +397,7 @@ exports.getAstrologerCharges = async (req, res) => {
 // @access  Public
 exports.getAstrologerUsingToken = async (req, res, next) => {
   try {
-    const astrologer = await Astrologer.findOne({userId:req.user._id}).populate(
+    const astrologer = await Astrologer.findOne({ userId: req.user._id }).populate(
       "specialties",
       "name"
     );
@@ -398,14 +421,14 @@ exports.updateAstrologerUsingToken = async (req, res, next) => {
   try {
     const updatedProfile = await Astrologer.findOneAndUpdate(
       { userId: req.user._id },
-      req.body, 
+      req.body,
       { new: true, runValidators: true }
     );
 
     if (!updatedProfile) {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
-    
+
     res.status(200).json({ success: true, data: updatedProfile });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
