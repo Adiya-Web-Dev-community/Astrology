@@ -1034,6 +1034,7 @@ const AstrologerForm = ({
       isAvailable: true,
     },
   });
+  // console.log("categories: ", categories);
 
   const { control, reset, setValue, watch } = form;
   const specialties = watch("specialties");
@@ -1050,118 +1051,120 @@ const AstrologerForm = ({
   }, [isEditing, currentAstrologer, reset]);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextField name="name" label="Name" control={control} />
-          <TextField
-            name="email"
-            label="Email"
-            type="email"
-            control={control}
-          />
-          <TextField name="firstName" label="First Name" control={control} />
-          <TextField name="lastName" label="Last Name" control={control} />
-          {!isEditing && (
+    <div className="max-h-[calc(100vh-100px)] overflow-y-auto">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TextField name="name" label="Name" control={control} />
             <TextField
-              name="password"
-              label="Password"
-              type="password"
+              name="email"
+              label="Email"
+              type="email"
               control={control}
             />
-          )}
-          <TextField
-            name="phoneNumber"
-            label="Phone Number"
+            <TextField name="firstName" label="First Name" control={control} />
+            <TextField name="lastName" label="Last Name" control={control} />
+            {!isEditing && (
+              <TextField
+                name="password"
+                label="Password"
+                type="password"
+                control={control}
+              />
+            )}
+            <TextField
+              name="phoneNumber"
+              label="Phone Number"
+              control={control}
+            />
+          </div>
+
+          <SpecialtiesField
+            categories={categories ? categories : []}
             control={control}
+            value={specialties}
+            onChange={(newSpecialties) => setValue("specialties", newSpecialties)}
           />
-        </div>
 
-        <SpecialtiesField
-          categories={categories?.categories || []}
-          control={control}
-          value={specialties}
-          onChange={(newSpecialties) => setValue("specialties", newSpecialties)}
-        />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TextField
+              name="experience"
+              label="Experience (years)"
+              type="number"
+              control={control}
+            />
+            <TextField name="pricing" label="Pricing" control={control} />
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextField
-            name="experience"
-            label="Experience (years)"
-            type="number"
+          <FormField
             control={control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Biography</FormLabel>
+                <FormControl>
+                  <Textarea {...field} className="w-full" />
+                </FormControl>
+              </FormItem>
+            )}
           />
-          <TextField name="pricing" label="Pricing" control={control} />
-        </div>
 
-        <FormField
-          control={control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Biography</FormLabel>
-              <FormControl>
-                <Textarea {...field} className="w-full" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="profileImage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profile Image</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  onChange={(e) => field.onChange(e.target.files)}
-                  className="w-full"
-                />
-              </FormControl>
-              {field.value && (
-                <Avatar>
-                  <AvatarImage
-                    src={
-                      field.value instanceof FileList
-                        ? URL.createObjectURL(field.value[0])
-                        : field.value
-                    }
-                    alt="Profile Image"
-                    width={100}
-                    height={100}
+          <FormField
+            control={control}
+            name="profileImage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profile Image</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    onChange={(e) => field.onChange(e.target.files)}
+                    className="w-full"
                   />
-                  <AvatarFallback>Profile</AvatarFallback>
-                </Avatar>
-              )}
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                {field.value && (
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        field.value instanceof FileList
+                          ? URL.createObjectURL(field.value[0])
+                          : field.value
+                      }
+                      alt="Profile Image"
+                      width={100}
+                      height={100}
+                    />
+                    <AvatarFallback>Profile</AvatarFallback>
+                  </Avatar>
+                )}
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={control}
-          name="isAvailable"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Available</FormLabel>
-              </div>
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={control}
+            name="isAvailable"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Available</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" className="w-full">
-          {isEditing ? "Update" : "Create"}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" className="w-full">
+            {isEditing ? "Update" : "Create"}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
 
