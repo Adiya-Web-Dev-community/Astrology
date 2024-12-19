@@ -80,7 +80,7 @@ exports.getChatHistory = async (req, res) => {
     const skip = (page - 1) * limit;
 
 
-    const chatHistory = await Chat.find({ $or: [{ sender: userId, receiver }, { sender: receiver, receiver: userId },] }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    const chatHistory = await Chat.find({ $or: [{ sender: userId, receiver }, { sender: receiver, receiver: userId },] }).sort({ createdAt: 1 }).skip(skip).limit(limit);
 
 
     const totalChats = await Chat.countDocuments({ $or: [{ sender: userId, receiver }, { sender: receiver, receiver: userId },] });
@@ -140,8 +140,8 @@ exports.getAllChatHistory = async (req, res) => {
     const chats = await Chat.find({
       $or: [{ sender: astrologerId }, { receiver: astrologerId }],
     })
-      .populate("sender", "name email firstName lastName") // Populate sender details
-      .populate("receiver", "name email  firstName lastName") // Populate receiver details
+      .populate("sender", "name email firstName lastName profilePic") // Populate sender details
+      .populate("receiver", "name email  firstName lastName profilePic") // Populate receiver details
       .exec();
 
     // Use a Map to extract unique users chatting with the astrologer
