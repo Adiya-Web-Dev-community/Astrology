@@ -159,6 +159,12 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: "feedback",
+            lazy: async () => ({
+              Component: (await import("@/components/feedbackManagement/feedbackManagement.tsx")).default,
+            }),
+          },
+          {
             path: "blogs/create",
             lazy: async () => ({
               Component: (await import("@/components/blogs/AddBlog.tsx"))

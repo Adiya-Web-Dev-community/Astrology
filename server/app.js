@@ -92,43 +92,6 @@ io.use((socket, next) => {
 });
 
 
-// io.on("connection", (socket) => {
-//   console.log(`Socket-Id: ${socket.id}`);
-//   console.log(`User connected: ${socket.user.email}`);
-//   // console.log(`User: ${socket.user}`);
-
-//   // Join a chat session room
-//   socket.on("joinSession", (sessionId) => {
-//     socket.join(sessionId);
-//     console.log(`User ${socket.user.email} joined session ${sessionId}`);
-//   });
-
-//   // Handle sending messages
-//   socket.on("sendMessage", async ({ sessionId,receiver, message }) => {
-//     if (!sessionId || !receiver || !message) {
-//       return console.error("Invalid sessionId, receiver, or message");
-//     }
-//     try {
-//       const chat = new chatModel({
-//         sessionId,
-//         sender: socket.user.id,
-//         receiver,
-//         message,
-//       });
-//       await chat.save();
-
-//       // Broadcast the message to all users in the session room
-//       io.to(sessionId).emit("receiveMessage", chat);
-//     } catch (error) {
-//       console.error("Error saving chat message:", error);
-//     }
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log(`User disconnected: ${socket.user.email}`);
-//   });
-// });
-
 // Generate room ID
 const generateRoomId = (user1, user2) => {
   return [user1, user2].sort().join('_');
