@@ -130,7 +130,7 @@ socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
       }
       const chat = new chatModel({
         sessionId,
-        sender: socket.user.id,
+        sender: socket.user._id,
         receiver,
         message,
       });
