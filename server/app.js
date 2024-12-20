@@ -112,31 +112,33 @@ app.post('/api/getRoomId', protect, (req, res) => {
 // Socket.IO events
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
-
+let roomID;
   // Join room
   socket.on('join_room', (roomId) => {
-    socket.join(roomId);
+    roomId=roomID
+    socket.join(roomID);
     console.log(`Socket ${socket.id} joined users room-id ${roomId}`);
   });
 
   // Handle message
-  socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
-    if (!receiver || !message) {
-      return console.error("Invalid receiverId, or message");
-    }
+socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
     try {
+      console.log("ROOM_ID",roomID);
+      
+      if (!receiver || !message) {
+        return console.error("Invalid receiverId, or message");
+      }
       const chat = new chatModel({
         sessionId,
         sender: socket.user.id,
         receiver,
         message,
       });
-      await chat.save();
-
-      // Broadcast the message to all users in the session room
-      io.to(roomId).emit("receiveMessage", chat);
+      await chat.save();  
+      io.to(roomID).emit("receiveMessage", chat);
     } catch (error) {
       console.error("Error saving chat message:", error);
+      socket.emit("error", { message: "Failed to send message" });
     }
   });
 
