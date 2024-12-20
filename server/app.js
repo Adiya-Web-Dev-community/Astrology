@@ -10,25 +10,28 @@ const callHistoryRoutes = require("./routes/callHistoryRoutes.js");
 const favoriteAstrologerRoutes = require("./routes/favoriteAstrologerRoutes");
 const vendorRoutes = require("./routes/vendorRoutes.js");
 const sessionRoutes = require("./routes/sessionRoutes.js");
-const appointmentRoutes = require('./routes/appointmentRoutes');
-const consultationRoutes = require('./routes/consultationRoutes');
-const walletRoutes = require('./routes/walletRoutes.js');
-const notificationRoutes = require('./routes/notificationRoutes');
-const thoughtRoutes = require('./routes/thoughtRoutes.js');
-const plansRoutes = require('./routes/plansRoutes');
-const bannerRoutes = require('./routes/bannerRoutes.js');
-const navgrahRoutes = require('./routes/navgrahRoutes.js');
-const horoscopeRoutes = require('./routes/horoscopeRoutes.js');
-const chatRoutes = require('./routes/chatRoutes.js');
-const feedbackRoutes = require('./routes/feedbackRoutes.js');
-const astrologerRequestRoutes = require('./routes/astrologerRequestRoutes.js');
+const appointmentRoutes = require("./routes/appointmentRoutes");
+const consultationRoutes = require("./routes/consultationRoutes");
+const walletRoutes = require("./routes/walletRoutes.js");
+const notificationRoutes = require("./routes/notificationRoutes");
+const thoughtRoutes = require("./routes/thoughtRoutes.js");
+const plansRoutes = require("./routes/plansRoutes");
+const bannerRoutes = require("./routes/bannerRoutes.js");
+const navgrahRoutes = require("./routes/navgrahRoutes.js");
+const horoscopeRoutes = require("./routes/horoscopeRoutes.js");
+const chatRoutes = require("./routes/chatRoutes.js");
+const feedbackRoutes = require("./routes/feedbackRoutes.js");
+const astrologerRequestRoutes = require("./routes/astrologerRequestRoutes.js");
 const freeServicesRoutes = require("./routes/FreeServices/freeServicesRoutes.js");
 const astroServicesRoutes = require("./routes/astroServices/astroServicesRoutes.js");
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const chatModel = require("./models/chatModel.js");
-const { protect, socketAuthenticator } = require("./middleware/authMiddleware.js");
+const {
+  protect,
+  socketAuthenticator,
+} = require("./middleware/authMiddleware.js");
 const enquiryRouter = require("./routes/enquiry.js");
 
 const app = express();
@@ -60,16 +63,16 @@ app.use("/api/support", supportRoutes);
 app.use("/api/call", callHistoryRoutes);
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/sessions", sessionRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/consultations', consultationRoutes);
-app.use('/api/wallet', walletRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/thoughts', thoughtRoutes);
-app.use('/api/plans', plansRoutes);
-app.use('/api/banners', bannerRoutes);
-app.use('/api/navgrah', navgrahRoutes);
-app.use('/api/horoscopes', horoscopeRoutes);
-app.use('/api/astrologer-requests', astrologerRequestRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/consultations", consultationRoutes);
+app.use("/api/wallet", walletRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/thoughts", thoughtRoutes);
+app.use("/api/plans", plansRoutes);
+app.use("/api/banners", bannerRoutes);
+app.use("/api/navgrah", navgrahRoutes);
+app.use("/api/horoscopes", horoscopeRoutes);
+app.use("/api/astrologer-requests", astrologerRequestRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/enquiry", enquiryRouter);
@@ -91,40 +94,39 @@ io.use((socket, next) => {
   socketAuthenticator(socket, next);
 });
 
-
 // Generate room ID
 const generateRoomId = (user1, user2) => {
-  return [user1, user2].sort().join('_');
+  return [user1, user2].sort().join("_");
 };
 
 // Endpoint to get or create room
-app.post('/api/getRoomId', protect, (req, res) => {
+app.post("/api/getRoomId", protect, (req, res) => {
   const { recipientId } = req.body;
 
   if (!recipientId) {
-    return res.status(400).json({ success: false, message: 'User IDs are required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "User IDs are required" });
   }
-  const userId = req.user._id
+  const userId = req.user._id;
   const roomId = generateRoomId(userId, recipientId);
   res.status(200).json({ success: true, roomId });
 });
 
 // Socket.IO events
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-let roomID;
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+  let roomID;
   // Join room
-  socket.on('join_room', (roomId) => {
-    roomId=roomID
+  socket.on("join_room", (roomId) => {
+    roomID = roomId;
     socket.join(roomID);
-    console.log(`Socket ${socket.id} joined users room-id ${roomId}`);
+    console.log(`Socket ${socket.id} joined users room-id ${roomID}`);
   });
 
   // Handle message
-socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
+  socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
     try {
-      console.log("ROOM_ID",roomID);
-      
       if (!receiver || !message) {
         return console.error("Invalid receiverId, or message");
       }
@@ -134,7 +136,7 @@ socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
         receiver,
         message,
       });
-      await chat.save();  
+      await chat.save();
       io.to(roomID).emit("receiveMessage", chat);
     } catch (error) {
       console.error("Error saving chat message:", error);
@@ -143,13 +145,10 @@ socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
   });
 
   // Disconnect
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
   });
 });
 
-
 // Replace app.listen with httpServer.listen
-httpServer.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
