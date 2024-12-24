@@ -83,7 +83,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: "Something went wrong" });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5580;
 
 app.get("/", async (req, res) => {
   res.send("ASTROLOGY APP");

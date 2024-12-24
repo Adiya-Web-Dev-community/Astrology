@@ -742,6 +742,289 @@
 
 // export default BannerManagement;
 //=============================================
+// import React, { useState } from "react";
+// import { useForm } from "react-hook-form";
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { 
+//   Table, 
+//   TableBody, 
+//   TableCell, 
+//   TableHead, 
+//   TableHeader, 
+//   TableRow 
+// } from "@/components/ui/table";
+// import { 
+//   Dialog, 
+//   DialogContent, 
+//   DialogHeader, 
+//   DialogTitle, 
+//   DialogFooter,
+// } from "@/components/ui/dialog";
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+//   AlertDialogTrigger
+// } from "@/components/ui/alert-dialog";
+// import { toast } from "@/components/ui/use-toast";
+// import uploadImage from "@/firebase/image";
+// import axiosInstance from "@/api/client";
+
+// const BannerManagement = () => {
+//   const queryClient = useQueryClient();
+//   const [isDialogOpen, setIsDialogOpen] = useState(false);
+//   const [imageFile, setImageFile] = useState(null);
+//   const [imagePreview, setImagePreview] = useState(null);
+//   const [bannerToDelete, setBannerToDelete] = useState(null);
+//   const { register, handleSubmit, reset } = useForm();
+
+//   // Fetch current active banner
+//   const { data: currentBanner, isLoading: loadingCurrent } = useQuery({
+//     queryKey: ["active-banner"],
+//     queryFn: async () => {
+//       const response = await axiosInstance.get("/banners/current");
+//       return response.data;
+//     },
+//   });
+
+//   // Fetch all banners
+//   const { data: bannersResponse, isLoading: loadingBanners } = useQuery({
+//     queryKey: ["all-banners"],
+//     queryFn: async () => {
+//       const response = await axiosInstance.get("/banners/all");
+//       return response.data;
+//     },
+//   });
+
+//   // Set banner mutation (create/update)
+//   const setBannerMutation = useMutation({
+//     mutationFn: (newBanner) => axiosInstance.post("/banners/set", newBanner),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(["active-banner"]);
+//       queryClient.invalidateQueries(["all-banners"]);
+//       closeDialog();
+//       toast({
+//         title: "Success",
+//         description: "Banner has been updated.",
+//       });
+//     },
+//     onError: () => {
+//       toast({
+//         title: "Error",
+//         description: "Failed to update banner.",
+//         variant: "destructive",
+//       });
+//     },
+//   });
+
+//   // Delete banner mutation
+//   const deleteBannerMutation = useMutation({
+//     mutationFn: (bannerId) => axiosInstance.delete(`/banners/${bannerId}`),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(["all-banners"]);
+//       setBannerToDelete(null);
+//       toast({
+//         title: "Success",
+//         description: "Banner has been deleted.",
+//       });
+//     },
+//     onError: () => {
+//       toast({
+//         title: "Error",
+//         description: "Failed to delete banner.",
+//         variant: "destructive",
+//       });
+//     },
+//   });
+
+//   // Handle image file selection
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setImageFile(file);
+//       const reader = new FileReader();
+//       reader.onloadend = () => setImagePreview(reader.result);
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   // Dialog handlers
+//   const openDialog = (banner = null) => {
+//     setIsDialogOpen(true);
+//     setImagePreview(banner?.imageUrl || null);
+//     reset({
+//       title: banner?.title || "",
+//       description: banner?.description || "",
+//       imageUrl: banner?.imageUrl || "",
+//     });
+//   };
+
+//   const closeDialog = () => {
+//     setIsDialogOpen(false);
+//     setImageFile(null);
+//     setImagePreview(null);
+//   };
+
+//   const onSubmit = async (data) => {
+//     try {
+//       let imageUrl = data.imageUrl;
+
+//       // Upload new image if selected
+//       if (imageFile) {
+//         imageUrl = await uploadImage("banners", imageFile, null);
+//       }
+
+//       // Submit the banner data
+//       setBannerMutation.mutate({ ...data, imageUrl });
+//     } catch {
+//       toast({
+//         title: "Error",
+//         description: "Failed to upload banner.",
+//         variant: "destructive",
+//       });
+//     }
+//   };
+
+//   if (loadingCurrent || loadingBanners) return <div>Loading...</div>;
+
+//   const allBanners = bannersResponse || [];
+//   const excludedBanners = allBanners.filter(
+//     (banner) => banner._id !== currentBanner?._id
+//   );
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <h1 className="text-2xl font-bold mb-4">Banner Management</h1>
+
+//       {/* Current Banner */}
+//       <div className="border p-4 mb-4">
+//         {currentBanner?.imageUrl ? (
+//           <div>
+//             <img
+//               src={currentBanner.imageUrl}
+//               alt="Current Banner"
+//               className="w-full max-w-md mx-auto rounded"
+//             />
+//             <h2 className="text-xl mt-2">{currentBanner.title}</h2>
+//             <p className="text-gray-600">{currentBanner.description}</p>
+//           </div>
+//         ) : (
+//           <p>No current banner set.</p>
+//         )}
+//         <Button onClick={() => openDialog(currentBanner)} className="mt-4">
+//           {currentBanner?.imageUrl ? "Edit Banner" : "Set Banner"}
+//         </Button>
+//       </div>
+
+//       {/* All Banners Table */}
+//       <Table>
+//         <TableHeader>
+//           <TableRow>
+//             <TableHead>Image</TableHead>
+//             <TableHead>Title</TableHead>
+//             <TableHead>Description</TableHead>
+//             <TableHead>Actions</TableHead>
+//           </TableRow>
+//         </TableHeader>
+//         <TableBody>
+//           {excludedBanners.map((banner) => (
+//             <TableRow key={banner._id}>
+//               <TableCell>
+//                 <img
+//                   src={banner.imageUrl}
+//                   alt={banner.title}
+//                   className="w-20 h-12 object-cover rounded"
+//                 />
+//               </TableCell>
+//               <TableCell>{banner.title || "Untitled"}</TableCell>
+//               <TableCell>{banner.description || "No description"}</TableCell>
+//               <TableCell>
+//                 <Button variant="ghost" onClick={() => openDialog(banner)}>
+//                   Edit
+//                 </Button>
+//                 <AlertDialog>
+//                   <AlertDialogTrigger asChild>
+//                     <Button
+//                       variant="destructive"
+//                       onClick={() => setBannerToDelete(banner)}
+//                     >
+//                       Delete
+//                     </Button>
+//                   </AlertDialogTrigger>
+//                   <AlertDialogContent>
+//                     <AlertDialogHeader>
+//                       <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+//                     </AlertDialogHeader>
+//                     <AlertDialogFooter>
+//                       <AlertDialogCancel>Cancel</AlertDialogCancel>
+//                       <AlertDialogAction
+//                         onClick={() =>
+//                           deleteBannerMutation.mutate(banner._id)
+//                         }
+//                       >
+//                         Delete
+//                       </AlertDialogAction>
+//                     </AlertDialogFooter>
+//                   </AlertDialogContent>
+//                 </AlertDialog>
+//               </TableCell>
+//             </TableRow>
+//           ))}
+//         </TableBody>
+//       </Table>
+
+//       {/* Create/Update Dialog */}
+//       <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
+//         <DialogContent>
+//           <DialogHeader>
+//             <DialogTitle>
+//               {imagePreview ? "Edit Banner" : "Set Banner"}
+//             </DialogTitle>
+//           </DialogHeader>
+//           <form onSubmit={handleSubmit(onSubmit)}>
+//             <Input
+//               type="file"
+//               accept="image/*"
+//               onChange={handleImageChange}
+//               className="mb-4"
+//             />
+//             {imagePreview && (
+//               <img
+//                 src={imagePreview}
+//                 alt="Preview"
+//                 className="w-full max-h-40 mb-4 rounded"
+//               />
+//             )}
+//             <Input
+//               {...register("title")}
+//               placeholder="Banner title"
+//               className="mb-4"
+//             />
+//             <Input
+//               {...register("description")}
+//               placeholder="Banner description"
+//               className="mb-4"
+//             />
+//             <DialogFooter>
+//               <Button type="submit">
+//                 {imagePreview ? "Update Banner" : "Set Banner"}
+//               </Button>
+//             </DialogFooter>
+//           </form>
+//         </DialogContent>
+//       </Dialog>
+//     </div>
+//   );
+// };
+
+// export default BannerManagement;
+//================================================
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -776,16 +1059,30 @@ import { toast } from "@/components/ui/use-toast";
 import uploadImage from "@/firebase/image";
 import axiosInstance from "@/api/client";
 
-const BannerManagement = () => {
+// Define types for data
+interface Banner {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
+interface FormData {
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
+const BannerManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [bannerToDelete, setBannerToDelete] = useState(null);
-  const { register, handleSubmit, reset } = useForm();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [bannerToDelete, setBannerToDelete] = useState<Banner | null>(null);
+  const { register, handleSubmit, reset } = useForm<FormData>();
 
   // Fetch current active banner
-  const { data: currentBanner, isLoading: loadingCurrent } = useQuery({
+  const { data: currentBanner, isLoading: loadingCurrent } = useQuery<Banner>({
     queryKey: ["active-banner"],
     queryFn: async () => {
       const response = await axiosInstance.get("/banners/current");
@@ -794,7 +1091,7 @@ const BannerManagement = () => {
   });
 
   // Fetch all banners
-  const { data: bannersResponse, isLoading: loadingBanners } = useQuery({
+  const { data: bannersResponse, isLoading: loadingBanners } = useQuery<Banner[]>({
     queryKey: ["all-banners"],
     queryFn: async () => {
       const response = await axiosInstance.get("/banners/all");
@@ -802,9 +1099,9 @@ const BannerManagement = () => {
     },
   });
 
-  // Set banner mutation (create/update)
+  // Mutation for creating or updating a banner
   const setBannerMutation = useMutation({
-    mutationFn: (newBanner) => axiosInstance.post("/banners/set", newBanner),
+    mutationFn: (newBanner: FormData) => axiosInstance.put("/banners/set", newBanner),
     onSuccess: () => {
       queryClient.invalidateQueries(["active-banner"]);
       queryClient.invalidateQueries(["all-banners"]);
@@ -823,9 +1120,9 @@ const BannerManagement = () => {
     },
   });
 
-  // Delete banner mutation
+  // Mutation for deleting a banner
   const deleteBannerMutation = useMutation({
-    mutationFn: (bannerId) => axiosInstance.delete(`/banners/${bannerId}`),
+    mutationFn: (bannerId: string) => axiosInstance.delete(`/banners/${bannerId}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-banners"]);
       setBannerToDelete(null);
@@ -844,18 +1141,18 @@ const BannerManagement = () => {
   });
 
   // Handle image file selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
+      reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   // Dialog handlers
-  const openDialog = (banner = null) => {
+  const openDialog = (banner: Banner | null = null) => {
     setIsDialogOpen(true);
     setImagePreview(banner?.imageUrl || null);
     reset({
@@ -871,7 +1168,7 @@ const BannerManagement = () => {
     setImagePreview(null);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: FormData) => {
     try {
       let imageUrl = data.imageUrl;
 
@@ -947,6 +1244,13 @@ const BannerManagement = () => {
               <TableCell>
                 <Button variant="ghost" onClick={() => openDialog(banner)}>
                   Edit
+                </Button>
+                <Button
+                  onClick={() =>
+                    setBannerMutation.mutate({ ...banner, imageUrl: banner.imageUrl })
+                  }
+                >
+                  Set as Banner
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
