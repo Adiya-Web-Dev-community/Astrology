@@ -4,7 +4,7 @@ const notificationService = require('../helpers/notificationService');
 
 // // Create and Send Notification
 exports.sendNotification = async (req, res) => {
-  const {title, message, priority, metadata } = req.body;
+  const {title, message,priority, metadata } = req.body;
   const userId = req.user._id;
   const fcmToken = req.user.fcm;
   try {
@@ -18,7 +18,7 @@ exports.sendNotification = async (req, res) => {
 
     if (notification) {
       // Send FCM Notification
-      await notificationService.sendMessage(title, message, fcmToken,userId);
+      await notificationService.sendMessage(title, message, fcmToken);
       res.status(201).json({ success: true, data: notification });
     } else {
       res.status(400).json({ success: false, message: 'Failed to create notification' });

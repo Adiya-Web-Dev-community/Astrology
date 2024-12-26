@@ -2,6 +2,8 @@ const Astrologer = require("../models/astrologerModel");
 const User = require("../models/userModel");
 const Session = require('../models/sessionModel');
 const Chat = require('../models/chatModel');
+const CallHistory = require("../models/CallHistory");
+const { default: mongoose } = require("mongoose");
 
 
 const getTodayDateRange = () => {
@@ -284,11 +286,107 @@ exports.createAstrologerWithAccount = async (req, res, next) => {
 
 
 // Controller to get today's earnings and chat count for an astrologer
+// exports.getAstrologerTodayStats = async (req, res) => {
+//   try {
+
+//     const astrologerId = req.user._id; // Get the astrologer's ID from the token
+//     const { todayStart, todayEnd } = getTodayDateRange();
+
+//     // Get total earnings for today
+//     const sessionsToday = await Session.find({
+//       astrologerId,
+//       startTime: { $gte: todayStart, $lte: todayEnd },
+//       status: 'completed',
+//     });
+
+//     const totalEarnings = sessionsToday.reduce((acc, session) => acc + (session.totalCharge || 0), 0);
+
+//     // Get the count of chats for today
+//     const chatsTodayCount = await Chat.countDocuments({
+//       sessionId: { $in: sessionsToday.map(session => session._id) },
+//       sentAt: { $gte: todayStart, $lte: todayEnd },
+//     });
+
+
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         totalEarnings,
+//         totalCallsCount: 9,
+//         chatsCount: chatsTodayCount,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server Error',
+//       error: error.message,
+//     });
+//   }
+// };
+
+// exports.getAstrologerTodayStats = async (req, res) => {
+//   try {
+//     const astrologerId = req.user._id; // Get the astrologer's ID from the token
+//     const { todayStart, todayEnd } = getTodayDateRange(); // Utility function to get start and end of today
+
+//     // Get total earnings for today
+//     const sessionsToday = await Session.find({
+//       astrologerId,
+//       startTime: { $gte: todayStart, $lte: todayEnd },
+//       status: 'completed',
+//     });
+
+//     const totalEarnings = sessionsToday.reduce((acc, session) => acc + (session.totalCharge || 0), 0);
+
+//     // Get the count of chats for today
+//     const chatsTodayCount = await Chat.countDocuments({
+//       sessionId: { $in: sessionsToday.map(session => session._id) },
+//       sentAt: { $gte: todayStart, $lte: todayEnd },
+//     });
+
+//     // Get today's distinct user count for calls
+//     const todaysCallCount = await CallHistory.aggregate([
+//       {
+//         $match: {
+//           astrologerId,
+//           callStartTime: { $gte: todayStart, $lte: todayEnd },
+//           callStatus: 'completed',
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: '$userId', // Group by user ID to get distinct users
+//         },
+//       },
+//       {
+//         $count: 'distinctUsers', // Count distinct user IDs
+//       },
+//     ]);
+
+//     const totalCallUsers = todaysCallCount.length > 0 ? todaysCallCount[0].distinctUsers : 0;
+
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         totalEarnings,
+//         totalCallsCount: totalCallUsers,
+//         chatsCount: chatsTodayCount,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server Error',
+//       error: error.message,
+//     });
+//   }
+// };
+
 exports.getAstrologerTodayStats = async (req, res) => {
   try {
-
     const astrologerId = req.user._id; // Get the astrologer's ID from the token
-    const { todayStart, todayEnd } = getTodayDateRange();
+    const { todayStart, todayEnd } = getTodayDateRange(); // Utility function to get start and end of today
 
     // Get total earnings for today
     const sessionsToday = await Session.find({
@@ -301,14 +399,33 @@ exports.getAstrologerTodayStats = async (req, res) => {
 
     // Get the count of chats for today
     const chatsTodayCount = await Chat.countDocuments({
-      sessionId: { $in: sessionsToday.map(session => session._id) },
+      sessionId: { $in: sessionsToday.map((session) => session._id) },
       sentAt: { $gte: todayStart, $lte: todayEnd },
     });
+
+    // Get today's distinct user count for calls
+    const callUsersAggregation = await CallHistory.aggregate([
+      {
+        $match: {
+          astrologerId: new mongoose.Types.ObjectId(astrologerId),
+          callStartTime: { $gte: todayStart, $lte: todayEnd },
+          callStatus: 'completed',
+        },
+      },
+      {
+        $group: {
+          _id: '$clientId', // Group by client ID to get distinct users
+        },
+      },
+    ]);
+
+    const totalCallUsers = callUsersAggregation.length;
 
     res.status(200).json({
       success: true,
       data: {
         totalEarnings,
+        totalCallsCount: totalCallUsers,
         chatsCount: chatsTodayCount,
       },
     });
@@ -320,6 +437,8 @@ exports.getAstrologerTodayStats = async (req, res) => {
     });
   }
 };
+
+
 // Enable/Disable Chat
 exports.enableDisableChat = async (req, res) => {
   try {

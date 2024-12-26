@@ -1,24 +1,27 @@
-// const admin = require("../firebase/firebaseAdmin");
-// const Notification = require("../models/notificationModel");
+const admin = require("../firebase/firebaseAdmin");
+const Notification = require("../models/notificationModel");
 
-// // Send FCM Message
-// exports.sendMessage = async (title, message, fcmToken) => {
-//   const messageData = {
-//     notification: {
-//       title: title,
-//       body: message,
-//     },
-//     token: fcmToken,
-//   };
+// Send FCM Message
+exports.sendMessage = async (title, message, fcmToken) => {
+  console.log("FCM TOKEN:>>>>>>>>>>>",fcmToken);
+  console.log("FCM TOKEN:>>>>>>>>>>>",fcmToken);
+  
+  const messageData = {
+    notification: {
+      title: title,
+      body: message,
+    },
+    token: fcmToken,
+  };
 
-//   try {
-//     const response = await admin.messaging().send(messageData);
-//     console.log("Notification sent successfully: ", response);
-//   } catch (error) {
-//     console.error("Error sending notification: ", error);
-//     throw new Error("FCM Notification failed");
-//   }
-// };
+  try {
+    const response = await admin.messaging().send(messageData);
+    console.log("Notification sent successfully: ", response);
+  } catch (error) {
+    console.error("Error sending notification: ", error);
+    throw new Error("FCM Notification failed");
+  }
+};
 
 // // exports.sendMessage = async (title, message, fcmToken, firebaseAdmin) => {
 // //   console.log("TOKEN_FROM sendMessage",fcmToken);
@@ -109,16 +112,46 @@
 //   createMessageData
 // };
 //===================================================================================
-const {
-  firebaseUserApp,
-  firebaseVendorApp,
-} = require("../firebase/firebaseAdmin");
-// const admin = require("../firebase/firebaseAdmin");
-const Notification = require("../models/notificationModel");
-const User = require("../models/userModel");
+// const {
+//   firebaseUserApp,
+//   firebaseVendorApp,
+// } = require("../firebase/firebaseAdmin");
+// // const admin = require("../firebase/firebaseAdmin");
+// const Notification = require("../models/notificationModel");
+// const User = require("../models/userModel");
 
-// Send FCM Message
+// // Send FCM Message
+// // const sendMessage = async (title, message, fcmToken, role) => {
+// //   const messageData = {
+// //     notification: {
+// //       title: title,
+// //       body: message,
+// //     },
+// //     token: fcmToken,
+// //   };
+
+// //   console.log(messageData);
+// //   let response;
+// //   try {
+// //     if (role === "astrologer") {
+// //       response = await firebaseVendorApp.messaging().send(messageData);
+// //     } else {
+// //       response = await firebaseUserApp.messaging().send(messageData);
+// //     }
+
+// //     console.log("Notification sent successfully: ", response);
+// //   } catch (error) {
+// //     console.error("Error sending notification: ", error);
+// //     // throw new Error("FCM Notification failed");
+// //   }
+// // };
+
+// // Improved send message function with better error handling
 // const sendMessage = async (title, message, fcmToken, role) => {
+//   if (!fcmToken) {
+//     throw new Error('FCM Token is required');
+//   }
+
 //   const messageData = {
 //     notification: {
 //       title: title,
@@ -127,196 +160,166 @@ const User = require("../models/userModel");
 //     token: fcmToken,
 //   };
 
-//   console.log(messageData);
-//   let response;
 //   try {
-//     if (role === "astrologer") {
-//       response = await firebaseVendorApp.messaging().send(messageData);
-//     } else {
-//       response = await firebaseUserApp.messaging().send(messageData);
-//     }
-
-//     console.log("Notification sent successfully: ", response);
+//     const app = role === "customer" ?  firebaseUserApp:firebaseVendorApp ;
+//     const response = await app.messaging().send(messageData);
+//     console.log("Notification sent successfully:", response);
+//     return response;
 //   } catch (error) {
-//     console.error("Error sending notification: ", error);
-//     // throw new Error("FCM Notification failed");
+//     console.error("Error sending notification:", error);
+    
+//     // More specific error handling
+//     if (error.code === 'app/invalid-credential') {
+//       console.error('Invalid credentials. Please check your service account key file.');
+//     } else if (error.code === 'messaging/invalid-registration-token') {
+//       console.error('Invalid FCM token.');
+//     } else if (error.code === 'messaging/registration-token-not-registered') {
+//       console.error('FCM token is no longer valid.');
+//     }
+    
+//     throw error; // Re-throw to handle it in the calling function
 //   }
 // };
 
-// Improved send message function with better error handling
-const sendMessage = async (title, message, fcmToken, role) => {
-  if (!fcmToken) {
-    throw new Error('FCM Token is required');
-  }
+// const sendAnnouncement = async (topic, title, message) => {
+//   const payload = {
+//     notification: {
+//       title: title,
+//       body: message,
+//     },
+//     topic: topic,
+//   };
 
-  const messageData = {
-    notification: {
-      title: title,
-      body: message,
-    },
-    token: fcmToken,
-  };
+//   try {
+//     await admin.messaging().send(payload);
+//     console.log("Announcement sent successfully");
+//   } catch (error) {
+//     console.error("Error sending announcement:", error);
+//     throw new Error("FCM Notification failed", error);
+//   }
+// };
 
-  try {
-    const app = role === "astrologer" ? firebaseVendorApp : firebaseUserApp;
-    const response = await app.messaging().send(messageData);
-    console.log("Notification sent successfully:", response);
-    return response;
-  } catch (error) {
-    console.error("Error sending notification:", error);
-    
-    // More specific error handling
-    if (error.code === 'app/invalid-credential') {
-      console.error('Invalid credentials. Please check your service account key file.');
-    } else if (error.code === 'messaging/invalid-registration-token') {
-      console.error('Invalid FCM token.');
-    } else if (error.code === 'messaging/registration-token-not-registered') {
-      console.error('FCM token is no longer valid.');
-    }
-    
-    throw error; // Re-throw to handle it in the calling function
-  }
-};
+// const subscribeToTopic = async (deviceToken, topic) => {
+//   try {
+//     await admin.messaging().subscribeToTopic(deviceToken, topic);
+//     console.log("Successfully subscribed to topic:", topic);
+//   } catch (error) {
+//     console.error("Error subscribing to topic:", error);
+//   }
+// };
 
-const sendAnnouncement = async (topic, title, message) => {
-  const payload = {
-    notification: {
-      title: title,
-      body: message,
-    },
-    topic: topic,
-  };
+// const sendNotification = async (deviceToken, title, message) => {
+//   const payload = {
+//     notification: {
+//       title: title,
+//       body: message,
+//     },
+//   };
 
-  try {
-    await admin.messaging().send(payload);
-    console.log("Announcement sent successfully");
-  } catch (error) {
-    console.error("Error sending announcement:", error);
-    throw new Error("FCM Notification failed", error);
-  }
-};
+//   try {
+//     await admin.messaging().sendToDevice(deviceToken, payload);
+//     console.log("Notification sent successfully");
+//   } catch (error) {
+//     console.error("Error sending notification:", error);
+//   }
+// };
 
-const subscribeToTopic = async (deviceToken, topic) => {
-  try {
-    await admin.messaging().subscribeToTopic(deviceToken, topic);
-    console.log("Successfully subscribed to topic:", topic);
-  } catch (error) {
-    console.error("Error subscribing to topic:", error);
-  }
-};
+// const getFcmTokens = async (role) => {
+//   try {
+//     let query = { FCM: { $exists: true, $ne: null } };
 
-const sendNotification = async (deviceToken, title, message) => {
-  const payload = {
-    notification: {
-      title: title,
-      body: message,
-    },
-  };
+//     // Define query based on audience type
+//     if (role === "all") {
+//       // No filter; fetch tokens for all users
+//       query = query;
+//     } else if (role === "astrologers") {
+//       query = { role: "astrologer" };
+//     } else if (role === "customer") {
+//       query = { role: "customer" };
+//     } else {
+//       throw new Error("Invalid audience type");
+//     }
 
-  try {
-    await admin.messaging().sendToDevice(deviceToken, payload);
-    console.log("Notification sent successfully");
-  } catch (error) {
-    console.error("Error sending notification:", error);
-  }
-};
+//     // Assuming you have a User model with an fcmToken field
+//     const users = await User.find(query);
 
-const getFcmTokens = async (role) => {
-  try {
-    let query = { FCM: { $exists: true, $ne: null } };
+//     // Extract and return the tokens as an array
+//     const fcmData = users
+//       .filter((user) => user.FCM) // Ensure FCM token exists
+//       .map((user) => ({
+//         fcmToken: user.FCM,
+//         role: user.role,
+//       }));
 
-    // Define query based on audience type
-    if (role === "all") {
-      // No filter; fetch tokens for all users
-      query = query;
-    } else if (role === "astrologers") {
-      query = { role: "astrologer" };
-    } else if (role === "customer") {
-      query = { role: "customer" };
-    } else {
-      throw new Error("Invalid audience type");
-    }
+//     return fcmData;
+//   } catch (error) {
+//     console.error("Error fetching FCM tokens: ", error);
+//     throw new Error("Failed to fetch FCM tokens");
+//   }
+// };
 
-    // Assuming you have a User model with an fcmToken field
-    const users = await User.find(query);
+// const sendAnnouncementNotification = async (title, body, role) => {
+//   try {
+//     let targetUsers = [];
 
-    // Extract and return the tokens as an array
-    const fcmData = users
-      .filter((user) => user.FCM) // Ensure FCM token exists
-      .map((user) => ({
-        fcmToken: user.FCM,
-        role: user.role,
-      }));
+//     console.log(role);
+//     // Fetch users based on the audience type
+//     if (role === "customer") {
+//       targetUsers = await User.find({ role: "customer" });
+//     } else if (role === "astrologers") {
+//       targetUsers = await User.find({ role: "astrologer" });
+//     } else if (role === "all") {
+//       targetUsers = await User.find({});
+//     } else {
+//       throw new Error(
+//         "Invalid audience type. Must be 'users', 'astrologers', or 'all'."
+//       );
+//     }
 
-    return fcmData;
-  } catch (error) {
-    console.error("Error fetching FCM tokens: ", error);
-    throw new Error("Failed to fetch FCM tokens");
-  }
-};
+//     const notificationMessage = {
+//       title,
+//       body,
+//     };
 
-const sendAnnouncementNotification = async (title, body, role) => {
-  try {
-    let targetUsers = [];
+//     for (const user of targetUsers) {
+//       const notificationRecord = await Notification.findOne({
+//         vendorId: user._id,
+//       });
 
-    console.log(role);
-    // Fetch users based on the audience type
-    if (role === "customer") {
-      targetUsers = await User.find({ role: "customer" });
-    } else if (role === "astrologers") {
-      targetUsers = await User.find({ role: "astrologer" });
-    } else if (role === "all") {
-      targetUsers = await User.find({});
-    } else {
-      throw new Error(
-        "Invalid audience type. Must be 'users', 'astrologers', or 'all'."
-      );
-    }
+//       if (notificationRecord) {
+//         // Add notification to the user's notifications array
+//         notificationRecord.notifications.push({
+//           ...notificationMessage,
+//           createdAt: new Date(),
+//           isRead: false,
+//         });
+//         await notificationRecord.save();
+//       } else {
+//         // Create a new notification record if it doesn't exist
+//         const newNotification = new Notification({
+//           vendorId: user._id,
+//           notifications: [
+//             {
+//               ...notificationMessage,
+//               createdAt: new Date(),
+//               isRead: false,
+//             },
+//           ],
+//         });
+//         await newNotification.save();
+//       }
+//     }
 
-    const notificationMessage = {
-      title,
-      body,
-    };
+//     console.log("Announcement sent successfully!");
+//   } catch (error) {
+//     console.error("Error sending announcement notification: ", error);
+//     // throw new Error("Failed to send announcement notification.");
+//   }
+// };
 
-    for (const user of targetUsers) {
-      const notificationRecord = await Notification.findOne({
-        vendorId: user._id,
-      });
-
-      if (notificationRecord) {
-        // Add notification to the user's notifications array
-        notificationRecord.notifications.push({
-          ...notificationMessage,
-          createdAt: new Date(),
-          isRead: false,
-        });
-        await notificationRecord.save();
-      } else {
-        // Create a new notification record if it doesn't exist
-        const newNotification = new Notification({
-          vendorId: user._id,
-          notifications: [
-            {
-              ...notificationMessage,
-              createdAt: new Date(),
-              isRead: false,
-            },
-          ],
-        });
-        await newNotification.save();
-      }
-    }
-
-    console.log("Announcement sent successfully!");
-  } catch (error) {
-    console.error("Error sending announcement notification: ", error);
-    // throw new Error("Failed to send announcement notification.");
-  }
-};
-
-module.exports = {
-  sendMessage,
-  sendAnnouncement,
-  getFcmTokens,
-  sendAnnouncementNotification,
-};
+// module.exports = {
+//   sendMessage,
+//   sendAnnouncement,
+//   getFcmTokens,
+//   sendAnnouncementNotification,
+// };

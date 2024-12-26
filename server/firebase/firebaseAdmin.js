@@ -1,13 +1,13 @@
 // firebase/firebaseAdmin.js
-// const admin = require("firebase-admin");
-// // const serviceAccount = require("../astrovendor-firebase-adminsdk.json");
-// const serviceAccount = require("../astrologer-firebase-adminsdk-com.astroindia_astrologers.json");
+const admin = require("firebase-admin");
+// const serviceAccount = require("../astrovendor-firebase-adminsdk.json");
+const serviceAccount = require("../astrologer-84809-firebase-adminsdk-h7fz2-f1f57884a0.json");
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
-// module.exports = admin;
+module.exports = admin;
 //====================================
 // const admin = require("firebase-admin");
 
@@ -60,7 +60,7 @@
 // module.exports = { getFirebaseAdmin };
 
 //============================================================
-const admin = require("firebase-admin");
+// const admin = require("firebase-admin");
 
 // // Load service account files
 // const userServiceAccount = require("../astrologer-firebase-adminsdk-com.ohmastro.json");
@@ -83,25 +83,25 @@ const admin = require("firebase-admin");
 // );
 
 // Load service account files
-const userServiceAccount = require("../astrologer-firebase-adminsdk-com.ohmastro.json");
-const vendorServiceAccount = require("../astrologer-firebase-adminsdk-com.astroindia_astrologers.json");
+// const userServiceAccount = require("../astrovendor-61cab-firebase-adminsdk-g3v8i-c00593c276.json");
+// const vendorServiceAccount = require("../astrovendor-61cab-firebase-adminsdk-g3v8i-c00593c276.json");
 
-// Initialize Firebase Admin for Users
-const firebaseUserApp = admin.initializeApp({
-  credential: admin.credential.cert(userServiceAccount),
-  projectId: userServiceAccount.project_id,
-  databaseURL: `https://${userServiceAccount.project_id}.firebaseio.com`
-}, "userApp");
+// // Initialize Firebase Admin for Users
+// const firebaseUserApp = admin.initializeApp({
+//   credential: admin.credential.cert(userServiceAccount)
+//   // projectId: userServiceAccount.project_id,
+//   // databaseURL: `https://${userServiceAccount.project_id}.firebaseio.com`
+// }, "userApp");
 
-// Initialize Firebase Admin for Vendors
-const firebaseVendorApp = admin.initializeApp({
-  credential: admin.credential.cert(vendorServiceAccount),
-  projectId: vendorServiceAccount.project_id,
-  databaseURL: `https://${vendorServiceAccount.project_id}.firebaseio.com`
-}, "vendorApp");
+// // Initialize Firebase Admin for Vendors
+// const firebaseVendorApp = admin.initializeApp({
+//   credential: admin.credential.cert(vendorServiceAccount)
+//   // projectId: vendorServiceAccount.project_id,
+//   // databaseURL: `https://${vendorServiceAccount.project_id}.firebaseio.com`
+// }, "vendorApp");
 
-// Export both instances for use in the server
-module.exports = {
-  firebaseUserApp,
-  firebaseVendorApp,
-};
+// // Export both instances for use in the server
+// module.exports = {
+//   firebaseUserApp,
+//   firebaseVendorApp,
+// };

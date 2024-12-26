@@ -747,18 +747,36 @@ const supportSchema = z.object({
 type SupportFormData = z.infer<typeof supportSchema>;
 
 // Custom hook for fetching support requests with pagination
+// const useSupportRequests = (page: number, limit: number) => {
+//   return useQuery<SupportRequestsResponse, Error>({
+//     queryKey: ["supportRequests", page, limit],
+//     queryFn: async () => {
+//       const { data } = await axiosInstance.get("/support/get-all-supports", {
+//         params: { page, limit },
+//       });
+//       return data;
+//     },
+//     keepPreviousData: true,
+//   });
+// };
+
 const useSupportRequests = (page: number, limit: number) => {
   return useQuery<SupportRequestsResponse, Error>({
     queryKey: ["supportRequests", page, limit],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/support/get-all-supports", {
+      const response = await axiosInstance.get("/support/get-all-supports", {
         params: { page, limit },
       });
-      return data;
+      // Map the API response to match the expected structure
+      return {
+        data: response.data, // Array of support requests
+        totalPages: response.pagination.totalPages, // Total pages
+      };
     },
     keepPreviousData: true,
   });
 };
+
 
 // Custom hook for creating a support request
 const useCreateSupportRequest = () => {

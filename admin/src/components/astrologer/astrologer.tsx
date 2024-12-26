@@ -233,173 +233,173 @@
 //   };
 
 //   return (
-    // <Layout>
-    //   <Layout.Header className="border border-b">
-    //     <div className="ml-auto flex items-center space-x-4">
-    //       <Search />
-    //       <ThemeSwitch />
-    //       <UserNav />
-    //     </div>
-    //   </Layout.Header>
-    //   <Layout.Body>
-    //     <div className="container mx-auto">
-    //       <div className="mb-2 flex items-center justify-between space-y-2">
-    //         <h1 className="text-2xl font-bold tracking-tight">
-    //           List of Astrologer's
-    //         </h1>
-    //       </div>
-    //       <Button onClick={handleCreateClick}>Add Astrologer</Button>
-    //       {astrologersLoading ? (
-    //         <Loader />
-    //       ) : (
-    //         <>
-    //           <Table>
-    //             <TableHeader>
-    //               <TableRow>
-    //                 <TableHead>Profile</TableHead>
-    //                 <TableHead>Name</TableHead>
-    //                 <TableHead>Email</TableHead>
-    //                 <TableHead>Phone</TableHead>
-    //                 <TableHead>Specialties</TableHead>
-    //                 <TableHead>Experience</TableHead>
-    //                 <TableHead>Pricing</TableHead>
-    //                 <TableHead>Availability</TableHead>
-    //                 <TableHead>Actions</TableHead>
-    //               </TableRow>
-    //             </TableHeader>
-    //             <TableBody>
-    //               {astrologers &&
-    //                 astrologers.map((astrologer) => (
-    //                   <TableRow key={astrologer._id}>
-    //                     <TableCell>
-    //                       <Avatar>
-    //                         <AvatarImage
-    //                           src={astrologer.profileImage}
-    //                           alt={astrologer?.name}
-    //                         />
-    //                         <AvatarFallback>
-    //                           {astrologer?.name?.charAt(0)}
-    //                         </AvatarFallback>
-    //                       </Avatar>
-    //                     </TableCell>
-    //                     <TableCell>{astrologer?.name}</TableCell>
-    //                     <TableCell>{astrologer.email}</TableCell>
-    //                     <TableCell>{astrologer.phoneNumber}</TableCell>
-    //                     <TableCell>
-    //                       {astrologer &&
-    //                         astrologer.specialties?.map((specialty) => (
-    //                           <Badge
-    //                             key={specialty._id}
-    //                             variant="secondary"
-    //                             className="mr-1"
-    //                           >
-    //                             {specialty.name}
-    //                           </Badge>
-    //                         ))}
-    //                     </TableCell>
-    //                     <TableCell>{astrologer.experience} years</TableCell>
-    //                     <TableCell>₹ {astrologer.pricing}</TableCell>
-    //                     <TableCell>
-    //                       <Checkbox
-    //                         checked={astrologer.isAvailable}
-    //                         onCheckedChange={() =>
-    //                           handleToggleAvailability(astrologer._id)
-    //                         }
-    //                       />
-    //                     </TableCell>
-    //                     <TableCell>
-    //                       <Button
-    //                         variant="outline"
-    //                         onClick={() => handleView(astrologer)}
-    //                         className="mr-2"
-    //                       >
-    //                         <Eye className="h-4 w-4" />
-    //                       </Button>
-    //                       <Button
-    //                         variant="outline"
-    //                         onClick={() => handleEditClick(astrologer)}
-    //                         className="mr-2"
-    //                       >
-    //                         <Pencil className="h-4 w-4" />
-    //                       </Button>
-    //                       <Button
-    //                         variant="outline"
-    //                         onClick={() => {
-    //                           setCurrentAstrologer(astrologer);
-    //                           setAlertDialogOpen(true);
-    //                         }}
-    //                       >
-    //                         <Trash2 className="h-4 w-4" />
-    //                       </Button>
-    //                     </TableCell>
-    //                   </TableRow>
-    //                 ))}
-    //             </TableBody>
-    //           </Table>
-    //           <div className="mt-4 flex justify-center">
-    //             <Pagination className="mt-4">
-    //               <PaginationContent>
-    //                 <PaginationPrevious
-    //                   onClick={() => handlePageChange(currentPage - 1)}
-    //                   disabled={currentPage === 1}
-    //                 />
-    //                 {[...Array(totalPages)].map((_, index) => (
-    //                   <PaginationItem key={index}>
-    //                     <PaginationLink
-    //                       isActive={index + 1 === currentPage}
-    //                       onClick={() => handlePageChange(index + 1)}
-    //                     >
-    //                       {index + 1}
-    //                     </PaginationLink>
-    //                   </PaginationItem>
-    //                 ))}
-    //                 <PaginationNext
-    //                   onClick={() => handlePageChange(currentPage + 1)}
-    //                   disabled={currentPage === totalPages}
-    //                 />
-    //               </PaginationContent>
-    //             </Pagination>
-    //           </div>
-    //         </>
-    //       )}
+//     <Layout>
+//       <Layout.Header className="border border-b">
+//         <div className="ml-auto flex items-center space-x-4">
+//           <Search />
+//           <ThemeSwitch />
+//           <UserNav />
+//         </div>
+//       </Layout.Header>
+//       <Layout.Body>
+//         <div className="container mx-auto">
+//           <div className="mb-2 flex items-center justify-between space-y-2">
+//             <h1 className="text-2xl font-bold tracking-tight">
+//               List of Astrologer's
+//             </h1>
+//           </div>
+//           <Button onClick={handleCreateClick}>Add Astrologer</Button>
+//           {astrologersLoading ? (
+//             <Loader />
+//           ) : (
+//             <>
+//               <Table>
+//                 <TableHeader>
+//                   <TableRow>
+//                     <TableHead>Profile</TableHead>
+//                     <TableHead>Name</TableHead>
+//                     <TableHead>Email</TableHead>
+//                     <TableHead>Phone</TableHead>
+//                     <TableHead>Specialties</TableHead>
+//                     <TableHead>Experience</TableHead>
+//                     <TableHead>Pricing</TableHead>
+//                     <TableHead>Availability</TableHead>
+//                     <TableHead>Actions</TableHead>
+//                   </TableRow>
+//                 </TableHeader>
+//                 <TableBody>
+//                   {astrologers &&
+//                     astrologers.map((astrologer) => (
+//                       <TableRow key={astrologer._id}>
+//                         <TableCell>
+//                           <Avatar>
+//                             <AvatarImage
+//                               src={astrologer.profileImage}
+//                               alt={astrologer?.name}
+//                             />
+//                             <AvatarFallback>
+//                               {astrologer?.name?.charAt(0)}
+//                             </AvatarFallback>
+//                           </Avatar>
+//                         </TableCell>
+//                         <TableCell>{astrologer?.name}</TableCell>
+//                         <TableCell>{astrologer.email}</TableCell>
+//                         <TableCell>{astrologer.phoneNumber}</TableCell>
+//                         <TableCell>
+//                           {astrologer &&
+//                             astrologer.specialties?.map((specialty) => (
+//                               <Badge
+//                                 key={specialty._id}
+//                                 variant="secondary"
+//                                 className="mr-1"
+//                               >
+//                                 {specialty.name}
+//                               </Badge>
+//                             ))}
+//                         </TableCell>
+//                         <TableCell>{astrologer.experience} years</TableCell>
+//                         <TableCell>₹ {astrologer.pricing}</TableCell>
+//                         <TableCell>
+//                           <Checkbox
+//                             checked={astrologer.isAvailable}
+//                             onCheckedChange={() =>
+//                               handleToggleAvailability(astrologer._id)
+//                             }
+//                           />
+//                         </TableCell>
+//                         <TableCell>
+//                           <Button
+//                             variant="outline"
+//                             onClick={() => handleView(astrologer)}
+//                             className="mr-2"
+//                           >
+//                             <Eye className="h-4 w-4" />
+//                           </Button>
+//                           <Button
+//                             variant="outline"
+//                             onClick={() => handleEditClick(astrologer)}
+//                             className="mr-2"
+//                           >
+//                             <Pencil className="h-4 w-4" />
+//                           </Button>
+//                           <Button
+//                             variant="outline"
+//                             onClick={() => {
+//                               setCurrentAstrologer(astrologer);
+//                               setAlertDialogOpen(true);
+//                             }}
+//                           >
+//                             <Trash2 className="h-4 w-4" />
+//                           </Button>
+//                         </TableCell>
+//                       </TableRow>
+//                     ))}
+//                 </TableBody>
+//               </Table>
+//               <div className="mt-4 flex justify-center">
+//                 <Pagination className="mt-4">
+//                   <PaginationContent>
+//                     <PaginationPrevious
+//                       onClick={() => handlePageChange(currentPage - 1)}
+//                       disabled={currentPage === 1}
+//                     />
+//                     {[...Array(totalPages)].map((_, index) => (
+//                       <PaginationItem key={index}>
+//                         <PaginationLink
+//                           isActive={index + 1 === currentPage}
+//                           onClick={() => handlePageChange(index + 1)}
+//                         >
+//                           {index + 1}
+//                         </PaginationLink>
+//                       </PaginationItem>
+//                     ))}
+//                     <PaginationNext
+//                       onClick={() => handlePageChange(currentPage + 1)}
+//                       disabled={currentPage === totalPages}
+//                     />
+//                   </PaginationContent>
+//                 </Pagination>
+//               </div>
+//             </>
+//           )}
 
-    //       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-    //         <DialogContent className="max-w-4xl h-auto">
-    //           <DialogHeader>
-    //             <DialogTitle>
-    //               {isEditing ? "Edit Astrologer" : "Add Astrologer"}
-    //             </DialogTitle>
-    //           </DialogHeader>
-    //           <AstrologerForm
-    //             isEditing={isEditing}
-    //             onSubmit={handleFormSubmit}
-    //             categories={categories}
-    //             currentAstrologer={currentAstrologer}
-    //           />
-    //         </DialogContent>
-    //       </Dialog>
+//           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+//             <DialogContent className="max-w-4xl h-auto">
+//               <DialogHeader>
+//                 <DialogTitle>
+//                   {isEditing ? "Edit Astrologer" : "Add Astrologer"}
+//                 </DialogTitle>
+//               </DialogHeader>
+//               <AstrologerForm
+//                 isEditing={isEditing}
+//                 onSubmit={handleFormSubmit}
+//                 categories={categories}
+//                 currentAstrologer={currentAstrologer}
+//               />
+//             </DialogContent>
+//           </Dialog>
 
-    //       <AlertDialog open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
-    //         <AlertDialogContent>
-    //           <AlertDialogHeader>
-    //             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-    //           </AlertDialogHeader>
-    //           <AlertDialogFooter>
-    //             <Button
-    //               variant="secondary"
-    //               onClick={() => setAlertDialogOpen(false)}
-    //             >
-    //               Cancel
-    //             </Button>
-    //             <Button variant="destructive" onClick={handleDelete}>
-    //               Delete
-    //             </Button>
-    //           </AlertDialogFooter>
-    //         </AlertDialogContent>
-    //       </AlertDialog>
-    //     </div>
-    //   </Layout.Body>
-    // </Layout>
+//           <AlertDialog open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
+//             <AlertDialogContent>
+//               <AlertDialogHeader>
+//                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+//               </AlertDialogHeader>
+//               <AlertDialogFooter>
+//                 <Button
+//                   variant="secondary"
+//                   onClick={() => setAlertDialogOpen(false)}
+//                 >
+//                   Cancel
+//                 </Button>
+//                 <Button variant="destructive" onClick={handleDelete}>
+//                   Delete
+//                 </Button>
+//               </AlertDialogFooter>
+//             </AlertDialogContent>
+//           </AlertDialog>
+//         </div>
+//       </Layout.Body>
+//     </Layout>
 //   );
 // };
 
