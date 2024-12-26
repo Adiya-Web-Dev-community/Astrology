@@ -33,6 +33,7 @@ const {
   socketAuthenticator,
 } = require("./middleware/authMiddleware.js");
 const enquiryRouter = require("./routes/enquiry.js");
+const userModel = require("./models/userModel.js");
 
 const app = express();
 
@@ -113,10 +114,49 @@ app.post("/api/getRoomId", protect, (req, res) => {
   res.status(200).json({ success: true, roomId });
 });
 
-// Socket.IO events
+// Socket.IO events WORKING CODE
+// io.on("connection", (socket) => {
+//   console.log("User connected:", socket.id);
+//   let roomID;
+//   // Join room
+//   socket.on("join_room", (roomId) => {
+//     roomID = roomId;
+//     socket.join(roomID);
+//     console.log(`Socket ${socket.id} joined users room-id ${roomID}`);
+//   });
+
+//   // Handle message
+//   socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
+//     try {
+//       if (!receiver || !message) {
+//         return console.error("Invalid receiverId, or message");
+//       }
+//       const chat = new chatModel({
+//         sessionId,
+//         sender: socket.user._id,
+//         receiver,
+//         message,
+//       });
+//       await chat.save();
+//       io.to(roomID).emit("receiveMessage", chat);
+//     } catch (error) {
+//       console.error("Error saving chat message:", error);
+//       socket.emit("error", { message: "Failed to send message" });
+//     }
+//   });
+
+//   // Disconnect
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
+
+
+//TESTING
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
   let roomID;
+
   // Join room
   socket.on("join_room", (roomId) => {
     roomID = roomId;
@@ -128,15 +168,45 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
     try {
       if (!receiver || !message) {
-        return console.error("Invalid receiverId, or message");
+        return socket.emit("error", { message: "Invalid receiver or message" });
       }
+
+      // Fetch sender user details (including role and active plan)
+      const sender = await User.findById(socket.user._id).populate("activePlan.planId");
+      if (!sender) {
+        return socket.emit("error", { message: "User not found" });
+      }
+
+      // Check if the user is a customer
+      if (sender.role === "customer") {
+        // Validate active plan
+        if (!sender.activePlan || !sender.activePlan.planId) {
+          return socket.emit("error", { message: "No active plan found. Please purchase a plan to initiate chat." });
+        }
+
+        const { remainingMessages } = sender.activePlan;
+
+        // Check if the user has remaining messages
+        if (remainingMessages <= 0) {
+          return socket.emit("error", { message: "Your plan limit is exhausted. Please upgrade your plan." });
+        }
+
+        // Decrement remaining messages
+        sender.activePlan.remainingMessages -= 1;
+        await sender.save();
+      }
+
+      // Save the chat message to the database
       const chat = new chatModel({
         sessionId,
         sender: socket.user._id,
         receiver,
         message,
       });
+
       await chat.save();
+
+      // Notify the room of the new message
       io.to(roomID).emit("receiveMessage", chat);
     } catch (error) {
       console.error("Error saving chat message:", error);
@@ -149,6 +219,8 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 });
+
+
 
 // Replace app.listen with httpServer.listen
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
