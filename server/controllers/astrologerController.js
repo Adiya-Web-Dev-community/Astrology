@@ -56,11 +56,14 @@ exports.getAstrologers = async (req, res, next) => {
 // @route   GET /api/v1/astrologers/:id
 // @access  Public
 exports.getAstrologer = async (req, res, next) => {
+  console.log("DETAILS ASTROLOGER");
+  
   try {
     const astrologer = await Astrologer.findById(req.params.id).populate(
-      "specialties",
-      "name"
+      "userId",
+      "specialties name"
     );
+    
 
     if (!astrologer) {
       return res.status(404).json({

@@ -78,7 +78,6 @@ app.use("/api/astrologer-requests", astrologerRequestRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/enquiry", enquiryRouter);
-app.use("/api/buy-plans", enquiryRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

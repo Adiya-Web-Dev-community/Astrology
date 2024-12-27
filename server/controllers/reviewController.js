@@ -6,7 +6,7 @@ const { default: mongoose } = require("mongoose");
 exports.createReview = async (req, res) => {
   try {
     const { astrologerId, rating, comment } = req.body;
-    const userId = req.user.id; // Assuming you have user authentication middleware
+    const userId = req.user._id; 
 
     // Check if the astrologer exists
     const astrologer = await Astrologer.findById(astrologerId);
@@ -15,15 +15,15 @@ exports.createReview = async (req, res) => {
     }
 
     // Check if the user has already reviewed this astrologer
-    const existingReview = await Review.findOne({
-      user: userId,
-      astrologer: astrologerId,
-    });
-    if (existingReview) {
-      return res
-        .status(400)
-        .json({ message: "You have already reviewed this astrologer" });
-    }
+    // const existingReview = await Review.findOne({
+    //   user: userId,
+    //   astrologer: astrologerId,
+    // });
+    // if (existingReview) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "You have already reviewed this astrologer" });
+    // }
 
     const newReview = new Review({
       user: userId,
