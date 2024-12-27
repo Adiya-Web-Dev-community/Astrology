@@ -34,6 +34,7 @@ const {
 } = require("./middleware/authMiddleware.js");
 const enquiryRouter = require("./routes/enquiry.js");
 const userModel = require("./models/userModel.js");
+const { sendMessage } = require("./helpers/notificationService.js");
 
 const app = express();
 
@@ -77,6 +78,7 @@ app.use("/api/astrologer-requests", astrologerRequestRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/enquiry", enquiryRouter);
+app.use("/api/buy-plans", enquiryRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -153,15 +155,112 @@ app.post("/api/getRoomId", protect, (req, res) => {
 
 
 //TESTING
+// io.on("connection", (socket) => {
+//   console.log("User connected:", socket.id);
+//   let roomID;
+
+//   // Join room
+//   socket.on("join_room", (roomId) => {
+//     roomID = roomId;
+//     socket.join(roomID);
+//     console.log(`Socket ${socket.id} joined users room-id ${roomID}`);
+//   });
+
+//   // Handle message
+//   socket.on("sendMessage", async ({ roomId, sessionId, receiver, message }) => {
+//     try {
+//       if (!receiver || !message) {
+//         return socket.emit("error", { message: "Invalid receiver or message" });
+//       }
+
+//       // Fetch sender user details (including role and active plan)
+//       const sender = await userModel.findById(socket.user._id).populate("activePlan.planId");
+//       if (!sender) {
+//         return socket.emit("error", { message: "User not found" });
+//       }
+
+//       // Check if the user is a customer
+//       if (sender.role === "customer") {
+//         // Validate active plan
+//         if (!sender.activePlan || !sender.activePlan.planId) {
+//           return socket.emit("error", { message: "No active plan found. Please purchase a plan to initiate chat." });
+//         }
+
+//         const { remainingMessages } = sender.activePlan;
+
+//         // Check if the user has remaining messages
+//         if (remainingMessages <= 0) {
+//           return socket.emit("error", { message: "Your plan limit is exhausted. Please upgrade your plan." });
+//         }
+
+//         // Decrement remaining messages
+//         sender.activePlan.remainingMessages -= 1;
+//         await sender.save();
+//       }
+
+//       // Check if there's any existing chat history between sender and receiver
+//       const chatHistory = await chatModel.find({
+//         $or: [
+//           { sender: socket.user._id, receiver },
+//           { sender: receiver, receiver: socket.user._id },
+//         ],
+//       });
+
+//       // If no chat history, send a welcome message (you can modify the message as needed)
+//       if (chatHistory.length === 0) {
+//         sendMessage(sender, "welcome");  // Assuming sendMessage function handles sending notifications/messages
+//       }
+
+//       // Save the chat message to the database
+//       const chat = new chatModel({
+//         sessionId,
+//         sender: socket.user._id,
+//         receiver,
+//         message,
+//       });
+
+//       await chat.save();
+
+//       // Notify the room of the new message
+//       io.to(roomID).emit("receiveMessage", chat);
+//     } catch (error) {
+//       console.error("Error saving chat message:", error);
+//       socket.emit("error", { message: "Failed to send message" });
+//     }
+//   });
+
+//   // Disconnect
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
+
+
+//F TESTING
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
   let roomID;
 
   // Join room
-  socket.on("join_room", (roomId) => {
+  socket.on("join_room", async (roomId) => {
     roomID = roomId;
     socket.join(roomID);
     console.log(`Socket ${socket.id} joined users room-id ${roomID}`);
+
+    // Fetch the user's role and details (assuming socket.user is set via authentication middleware)
+    const user = await userModel.findById(socket.user._id);
+    if (user) {
+      if (user.role === "customer") {
+        // Send Welcome Message
+        const welcomeMessage = {
+          sender: "System", // Can be replaced with a system bot ID or astrologer's ID
+          message: "Welcome to OHM Astro! Our expert astrologers are here to guide you through the planets and nakshatras.",
+          hindiMessage: "ओहम एस्ट्रो में आपका स्वागत है! हमारे विशेषज्ञ ज्योतिषी आपको ग्रहों व नक्षत्रों के माध्यम से मार्गदर्शन करने के लिए तैयार हैं।",
+        };
+
+        io.to(roomID).emit("receiveMessage", welcomeMessage);
+      }
+    }
   });
 
   // Handle message
@@ -170,32 +269,32 @@ io.on("connection", (socket) => {
       if (!receiver || !message) {
         return socket.emit("error", { message: "Invalid receiver or message" });
       }
-
+  
       // Fetch sender user details (including role and active plan)
-      const sender = await User.findById(socket.user._id).populate("activePlan.planId");
+      const sender = await userModel.findById(socket.user._id).populate("activePlan.planId");
       if (!sender) {
         return socket.emit("error", { message: "User not found" });
       }
-
+  
       // Check if the user is a customer
       if (sender.role === "customer") {
         // Validate active plan
         if (!sender.activePlan || !sender.activePlan.planId) {
           return socket.emit("error", { message: "No active plan found. Please purchase a plan to initiate chat." });
         }
-
+  
         const { remainingMessages } = sender.activePlan;
-
+  
         // Check if the user has remaining messages
         if (remainingMessages <= 0) {
           return socket.emit("error", { message: "Your plan limit is exhausted. Please upgrade your plan." });
         }
-
+  
         // Decrement remaining messages
         sender.activePlan.remainingMessages -= 1;
         await sender.save();
       }
-
+  
       // Save the chat message to the database
       const chat = new chatModel({
         sessionId,
@@ -203,22 +302,36 @@ io.on("connection", (socket) => {
         receiver,
         message,
       });
-
+  
       await chat.save();
-
+  
       // Notify the room of the new message
       io.to(roomID).emit("receiveMessage", chat);
+  
+      // Send Thank You Message ONLY when the session is ending or after a specific number of messages
+      const sessionMessages = await chatModel.countDocuments({ sessionId });
+      if (sessionMessages === 1 || sessionMessages % 5 === 0) { // Example: First message or every 5 messages
+        const thankYouMessage = {
+          sender: "System", // Can be replaced with a system bot ID or astrologer's ID
+          message: "Thank you for trusting us! We hope our astrology services have brought positivity and clarity to your life. Wishing you a brighter future!",
+          hindiMessage: "हम पर विश्वास करने के लिए धन्यवाद! हमें आशा है कि हमारी ज्योतिष सेवाएं आपके जीवन में सकारात्मकता और स्पष्टता लाएंगी। आपका भविष्य उज्ज्वल हो!",
+        };
+  
+        io.to(roomID).emit("receiveMessage", thankYouMessage);
+      }
     } catch (error) {
       console.error("Error saving chat message:", error);
       socket.emit("error", { message: "Failed to send message" });
     }
   });
+  
 
   // Disconnect
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
+
 
 
 

@@ -6,17 +6,91 @@ const { generateOTP } = require("../helpers/otpHelper");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Astrologer = require("../models/astrologerModel");
+const Plan = require("../models/plansModel");
+
+// exports.requestOTP = async (req, res) => {
+//   try {
+//     const { email, fcm } = req.body;
+
+//     // Find user by email without password, firstName, and lastName
+//     let user = await User.findOne({ email });
+
+//     // If user doesn't exist, create a new one
+//     if (!user) {
+//       user = new User({ email }); // Only set email when creating a new user
+//       await user.save();
+//     }
+
+//     const otp = generateOTP();
+//     user.otp = {
+//       code: otp,
+//       expiresAt: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
+//     };
+//     // Save or update FCM token
+//     if (fcm) {
+//       user.fcm = fcm;
+//     }
+//     await user.save();
+
+//     // Define the HTML email content
+//     const otpHtml = `
+//       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dddddd; border-radius: 10px;">
+//         <h2 style="color: #333;">OTP Verification</h2>
+//         <p style="color: #555;">
+//           Your OTP is
+//         </p>
+//         <div style="text-align: center; margin: 20px 0;">
+//           <p style="font-size: 18px; font-weight: bold; color: #007BFF;">${otp}</p>
+//         </div>
+//         <p style="color: #999; font-size: 12px;">
+//           Best regards,<br>
+//           Your Service Team
+//         </p>
+//       </div>
+//     `;
+//     await sendEmail(email, "Verify Your Account", otpHtml);
+
+//     res.status(201).json({
+//       success: true,
+//       message: "OTP has been sent to your email. Please check your inbox.",
+//     });
+//   } catch (error) {
+//     res.status(400).json({ success: false, error: error.message });
+//   }
+// };
 
 exports.requestOTP = async (req, res) => {
   try {
     const { email, fcm } = req.body;
 
-    // Find user by email without password, firstName, and lastName
+    // Find user by email
     let user = await User.findOne({ email });
 
     // If user doesn't exist, create a new one
     if (!user) {
-      user = new User({ email }); // Only set email when creating a new user
+      // Fetch the "Free" plan from the database
+      const freePlan = await Plan.findOne({ name: "Free" });
+
+      if (!freePlan) {
+        return res.status(400).json({ success: false, message: "Free plan not found in the system." });
+      }
+
+      // Calculate plan duration and dates
+      const durationInDays = freePlan.duration || 28; // Default to 28 days
+      const startDate = new Date();
+      const endDate = new Date(startDate.getTime() + durationInDays * 24 * 60 * 60 * 1000); // Add duration in milliseconds
+
+      // Create a new user with the Free plan
+      user = new User({
+        email,
+        activePlan: {
+          planId: freePlan._id,
+          startDate: startDate,
+          endDate: endDate,
+          remainingMessages: freePlan.maxMessages || 0,
+          remainingSize: freePlan.maxMessageSize || 0,
+        },
+      });
       await user.save();
     }
 
@@ -25,6 +99,7 @@ exports.requestOTP = async (req, res) => {
       code: otp,
       expiresAt: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
     };
+
     // Save or update FCM token
     if (fcm) {
       user.fcm = fcm;
@@ -57,6 +132,9 @@ exports.requestOTP = async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 };
+
+
+
 
 exports.register = async (req, res) => {
   try {

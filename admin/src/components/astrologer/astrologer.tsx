@@ -526,7 +526,7 @@ const AstrologerManagement: React.FC = () => {
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await axiosInstance.get("/categories");
-      return response.data;
+      return response;
     },
   });
 
