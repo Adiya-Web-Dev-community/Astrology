@@ -226,7 +226,7 @@ exports.getTopRatedAstrologers = async (req, res) => {
     // Fetch detailed astrologer information and merge with aggregation results
     const astrologerIds = topRatedAstrologers.map((item) => item._id);
     const astrologers = await Astrologer.find({ _id: { $in: astrologerIds } })
-      .select("name profilePic bio")
+      .select("name profilePic bio profileImage")
       .lean();
 
     // Merge astrologer details with aggregation data
