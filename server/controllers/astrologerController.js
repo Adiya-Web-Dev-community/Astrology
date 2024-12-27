@@ -225,6 +225,37 @@ exports.toggleAstrologerAvailability = async (req, res, next) => {
     res.status(500).json({ success: false, error: "Server Error" });
   }
 };
+exports.toggleOnlineAstrologerAvailability = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+
+    // Fetch the astrologer document using the associated userId
+    const astrologer = await Astrologer.findOne({ userId });
+
+    if (!astrologer) {
+      return res.status(404).json({
+        success: false,
+        error: "Astrologer not found",
+      });
+    }
+
+    // Toggle the availability status
+    astrologer.isAvailable = !astrologer.isAvailable;
+    await astrologer.save();
+
+    return res.status(200).json({
+      success: true,
+      data: astrologer,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};
+
 
 // @desc    Create new astrologer with user account
 // @route   POST /api/v1/astrologers/create
@@ -519,8 +550,8 @@ exports.getAstrologerCharges = async (req, res) => {
 exports.getAstrologerUsingToken = async (req, res, next) => {
   try {
     const astrologer = await Astrologer.findOne({ userId: req.user._id }).populate(
-      "specialties",
-      "name"
+      "userId",
+      "firstName lastName email phoneNumber gender "
     );
 
     if (!astrologer) {

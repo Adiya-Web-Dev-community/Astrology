@@ -332,6 +332,90 @@ io.on("connection", (socket) => {
 });
 
 
+const handlePaymentCallback = async (req, res) => {
+  try {
+    const { merchantId, merchantTransactionId, transactionId } = req.body;
+
+    console.log("Received payment callback:", req.body);
+
+    // Verify the payment status
+    if (merchantId !== process.env.MERCHANT_ID) {
+      console.error("Invalid merchant ID:", merchantId);
+      return res.status(400).json({ message: "Invalid merchant ID" });
+    }
+
+    const appointment = await Appointment.findById(merchantTransactionId);
+    if (!appointment) {
+      console.error("Appointment not found:", merchantTransactionId);
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    const convertedId = `MID${merchantTransactionId}`;
+
+    // Check payment status with PhonePe's status check API
+    const checkStatusResponse = await checkPaymentStatus(
+      merchantId,
+      convertedId,
+      appointment.createdBy.mobile
+    );
+
+    if (checkStatusResponse.success) {
+      appointment.paymentStatus = checkStatusResponse.code;
+      appointment.transactionId = transactionId;
+      await appointment.save();
+
+      res.json({ status: appointment.paymentStatus });
+    } else {
+      console.error("Payment verification failed:", checkStatusResponse);
+      res.status(400).json({ message: "Payment verification failed" });
+    }
+  } catch (error) {
+    console.error("Error processing payment callback:", error);
+    res.status(500).json({ message: "Error processing payment" });
+  }
+};
+
+const checkPaymentStatus = async (
+  merchantId,
+  merchantTransactionId,
+  mobileNumber
+) => {
+  const saltKey = process.env.SALT_KEY;
+  const saltIndex = process.env.SALT_INDEX;
+
+  // Construct the API endpoint for checking payment status
+  const endpoint = `/pg/v1/status/${merchantId}/${merchantTransactionId}`;
+
+  // Correct the string format to match PhonePe's requirement
+  const stringToHash = `${endpoint}${saltKey}${mobileNumber}`;
+  const sha256 = crypto.createHash("sha256").update(stringToHash).digest("hex");
+  const xVerify = `${sha256}###${saltIndex}`;
+
+  try {
+    // Make a GET request to the PhonePe API
+    const response = await axios.get(
+      `https://api-preprod.phonepe.com/apis/pg-sandbox${endpoint}`,
+      // `https://api.phonepe.com/apis/hermes/${endpoint}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-VERIFY": xVerify,
+          "X-MERCHANT-ID": merchantId,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error checking payment status:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to check payment status with PhonePe");
+  }
+};
+
+// Define the payment callback route
+app.post("/api/payment-callback", handlePaymentCallback);
 
 
 // Replace app.listen with httpServer.listen
