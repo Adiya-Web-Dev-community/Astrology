@@ -1,7 +1,12 @@
 // firebase/firebaseAdmin.js
 const admin = require("firebase-admin");
 // const serviceAccount = require("../astrovendor-firebase-adminsdk.json");
-const serviceAccount = require("../astrologer-84809-firebase-adminsdk-h7fz2-f1f57884a0.json");
+// const serviceAccount = require("../astrologer-84809-firebase-adminsdk-h7fz2-f1f57884a0.json");
+
+
+// Parse the credentials from the GOOGLE_CREDENTIALS environment variable
+const serviceAccount = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

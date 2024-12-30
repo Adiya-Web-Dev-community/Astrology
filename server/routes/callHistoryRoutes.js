@@ -12,9 +12,9 @@ const router = express.Router();
 
 
 
-router.post('/initiate', initiateCall);
-router.post('/end', endCall);
-router.post('/missed', handleMissedCall);
+router.post('/initiate',protect, initiateCall);
+router.post('/end', protect,endCall);
+router.post('/missed', protect,handleMissedCall);
 
 router.use(protect);
 
