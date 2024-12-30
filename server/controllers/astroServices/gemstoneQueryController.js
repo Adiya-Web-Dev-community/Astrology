@@ -29,12 +29,27 @@ exports.createGemstoneQuery = async (req, res) => {
 };
 
 // Get all queries
+// Get all queries with optional pagination and limits
 exports.getAllQueries = async (req, res) => {
   try {
-    const queries = await GemstoneQuery.find().populate("userId gemstoneId");
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+
+    const queries = await GemstoneQuery.find()
+      .populate("userId gemstoneId")
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit, 10));
+
+    const totalQueries = await GemstoneQuery.countDocuments();
+
     res.status(200).json({
       success: true,
       data: queries,
+      meta: {
+        totalQueries,
+        totalPages: Math.ceil(totalQueries / limit),
+        currentPage: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+      },
     });
   } catch (error) {
     console.error("Error fetching queries:", error);
@@ -44,6 +59,7 @@ exports.getAllQueries = async (req, res) => {
     });
   }
 };
+
 
 // Get queries by user
 exports.getQueriesByUser = async (req, res) => {

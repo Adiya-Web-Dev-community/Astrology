@@ -6,8 +6,15 @@ const {
   deleteCallHistory,
 } = require("../controllers/callHistoryController");
 const { protect } = require("../middleware/authMiddleware");
+const { initiateCall, endCall, handleMissedCall } = require("../helpers/callHandlers");
 
 const router = express.Router();
+
+
+
+router.post('/initiate', initiateCall);
+router.post('/end', endCall);
+router.post('/missed', handleMissedCall);
 
 router.use(protect);
 

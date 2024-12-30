@@ -341,13 +341,14 @@ const AddBlog = () => {
     },
   });
 
-  const { categories } = useQuery({
+  const { data:categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await axiosInstance.get("/categories");
       return response;
     },
   });
+console.log("QWERTY Categories?>>>>>>>>>>>>>>>>>>>>",categories);
 
   const handleFileChange = (event) => {
     setThumbnailFile(event.target.files[0]);
@@ -512,7 +513,7 @@ const AddBlog = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {categories?.map((category) => (
+                            {categories?.categories?.map((category) => (
                               <SelectItem
                                 key={category._id}
                                 value={category._id}

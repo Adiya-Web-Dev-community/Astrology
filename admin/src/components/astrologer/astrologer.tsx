@@ -454,6 +454,13 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import Loader from "../loader";
 import { useAuth } from "@/hooks/useAuth";
 import { Search } from "../search";
@@ -651,6 +658,12 @@ const AstrologerManagement: React.FC = () => {
     queryClient.invalidateQueries(["astrologers", page]);
   };
 
+  const handleLimitChange = (value: string) => {
+    setLimit(Number(value));
+    dispatch(setCurrentPage(1)); // Reset to first page when changing limit
+    queryClient.invalidateQueries(["astrologers"]);
+  };
+
   return (
     <Layout>
     <Layout.Header className="border border-b">
@@ -667,7 +680,20 @@ const AstrologerManagement: React.FC = () => {
             List of Astrologer's
           </h1>
         </div>
-        <Button onClick={handleCreateClick}>Add Astrologer</Button>
+        <div className="flex items-center gap-4">
+              <Select value={String(limit)} onValueChange={handleLimitChange}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Select limit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 per page</SelectItem>
+                  <SelectItem value="10">10 per page</SelectItem>
+                  <SelectItem value="20">20 per page</SelectItem>
+                  <SelectItem value="50">50 per page</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={handleCreateClick}>Add Astrologer</Button>
+            </div>
         {astrologersLoading ? (
           <Loader />
         ) : (

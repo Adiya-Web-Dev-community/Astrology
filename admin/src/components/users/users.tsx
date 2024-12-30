@@ -22,23 +22,44 @@ import {
   PaginationLink,
   PaginationPrevious,
   PaginationNext,
-  PaginationEllipsis,
-} from "@/components/ui/pagination"; // Import the Pagination components
+} from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 
-const UserList = () => {
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  isVerified: boolean;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: User[];
+  pagination: {
+    totalUsers: number;
+    currentPage: number;
+    totalPages: number;
+    limit: number;
+  };
+}
+
+const UserList: React.FC = () => {
   const { token } = useAuth();
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10); // Set a default limit
-  const [totalPages, setTotalPages] = useState(1); // State for total pages
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await axiosInstance.get(
+        const response = await axiosInstance.get<ApiResponse>(
           `/users/get-all-users?page=${page}&limit=${limit}`,
           {
             headers: {
@@ -47,19 +68,21 @@ const UserList = () => {
           }
         );
         setUsers(response.data);
-        setTotalPages(Math.ceil(response.pagination.totalPages / limit)); // Update total pages based on the response
+        setTotalPages(response.pagination.totalPages);
         setLoading(false);
-      } catch (err) {
-        setError(err.message || "Failed to fetch users");
+      } catch (err: any) {
+        setError(err.response?.message || "Failed to fetch users");
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, [token, page, limit]); // Add page and limit as dependencies
+  }, [token, page, limit]);
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
   };
 
   if (loading) {
