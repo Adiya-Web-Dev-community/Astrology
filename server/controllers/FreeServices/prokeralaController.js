@@ -382,10 +382,10 @@ exports.getKundaliMatch = async (req, res) => {
 
   const params = {
     ayanamsa: 1,
-    boy_coordinates: `${maleDetails.location.latitude},${maleDetails.location.longitude}`,
-    boy_dob: `${maleDetails.date}T${maleDetails.time}Z`, // Fixed format (without extra :00)
-    girl_coordinates: `${femaleDetails.location.latitude},${femaleDetails.location.longitude}`,
-    girl_dob: `${femaleDetails.date}T${femaleDetails.time}Z`, // Fixed format (without extra :00)
+    boy_coordinates: `${maleDetails?.location?.latitude},${maleDetails?.location?.longitude}`,
+    boy_dob: `${maleDetails?.date}T${maleDetails?.time}Z`, 
+    girl_coordinates: `${femaleDetails?.location?.latitude},${femaleDetails?.location?.longitude}`,
+    girl_dob: `${femaleDetails?.date}T${femaleDetails?.time}Z`, 
     la: "en",
   };
   
