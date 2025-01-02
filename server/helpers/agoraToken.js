@@ -76,12 +76,52 @@
 
 // module.exports = generateAgoraToken;
 //==============================================
-const { RtcTokenBuilder, RtcRole } = require('agora-token');
+// const { RtcTokenBuilder, RtcRole } = require('agora-token');
+
+// const generateAgoraToken = (channelName, uid) => {
+//   try {
+//     console.log(RtcRole);
+    
+//     const appId = process.env.AGORAAPPID?.trim();
+//     const appCertificate = process.env.AGORAAPPCERTIFICATE?.trim();
+    
+//     if (!appId || !appCertificate) {
+//       throw new Error("Agora App ID or Certificate is missing");
+//     }
+
+//     // const channelName = `channel${Date.now()}`;
+//     // const uid = Math.floor(Math.random() * 899999) + 100000; // Between 100000-999999
+    
+//     // Token expires in 1 hour
+//     const expirationTimeInSeconds = 600;
+//     const currentTimestamp = Math.floor(Date.now() / 1000);
+//     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+
+//     // Build token with uid
+//     const token = RtcTokenBuilder.buildTokenWithUid(
+//       appId,
+//       appCertificate,
+//       channelName,
+//       uid,
+//       RtcRole.PUBLISHER,
+//       privilegeExpiredTs
+//     );
+
+//     return token;
+//   } catch (error) {
+//     console.error("Token Generation Error:", error);
+//     throw error;
+//   }
+// };
+
+// module.exports = generateAgoraToken;
+
+//==============================================
+const RtcTokenBuilder2 = require('agora-token').RtcTokenBuilder;
+const RtcRole = require('agora-token').RtcRole;
 
 const generateAgoraToken = (channelName, uid) => {
   try {
-    console.log(RtcRole);
-    
     const appId = process.env.AGORAAPPID?.trim();
     const appCertificate = process.env.AGORAAPPCERTIFICATE?.trim();
     
@@ -89,23 +129,34 @@ const generateAgoraToken = (channelName, uid) => {
       throw new Error("Agora App ID or Certificate is missing");
     }
 
-    // const channelName = `channel${Date.now()}`;
-    // const uid = Math.floor(Math.random() * 899999) + 100000; // Between 100000-999999
+    // Convert string uid to number if needed
+    const numericUid = typeof uid === 'string' ? parseInt(uid) : uid;
     
-    // Token expires in 1 hour
-    const expirationTimeInSeconds = 600;
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+    // Token configuration
+    const tokenExpirationInSeconds = 3600; // 1 hour
+    const joinChannelPrivilegeExpireInSeconds = 3600;
+    const pubAudioPrivilegeExpireInSeconds = 3600;
+    const pubVideoPrivilegeExpireInSeconds = 3600;
+    const pubDataStreamPrivilegeExpireInSeconds = 3600;
 
-    // Build token with uid
-    const token = RtcTokenBuilder.buildTokenWithUid(
+    // Build token with uid and privileges
+    const token = RtcTokenBuilder2.buildTokenWithUidAndPrivilege(
       appId,
       appCertificate,
       channelName,
-      uid,
-      RtcRole.PUBLISHER,
-      privilegeExpiredTs
+      numericUid,
+      tokenExpirationInSeconds,
+      joinChannelPrivilegeExpireInSeconds,
+      pubAudioPrivilegeExpireInSeconds,
+      pubVideoPrivilegeExpireInSeconds,
+      pubDataStreamPrivilegeExpireInSeconds
     );
+
+    console.log('Token Generation Debug:', {
+      channelName,
+      uid: numericUid,
+      tokenLength: token.length
+    });
 
     return token;
   } catch (error) {
