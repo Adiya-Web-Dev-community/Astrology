@@ -5,6 +5,8 @@ const User = require('../models/userModel');
 const Notification = require('../models/notificationModel');
 const CallHistory = require('../models/CallHistory');
 const Astrologer = require('../models/astrologerModel');
+const generateAgoraToken = require('./agoraToken');
+
 
 // Initiate a call
 const initiateCall = async (req, res) => {
@@ -137,7 +139,8 @@ const initiateCall = async (req, res) => {
       channelName: `channel_${Date.now()}`,
       uid: `uid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
-
+// Generate Agora token
+const token = generateAgoraToken(credentials.channelName, credentials.uid);
     // Create session record
     const session = await Session.create({
       sessionType: callType === 'video' ? 'videoCall' : 'audioCall',
@@ -171,7 +174,8 @@ const initiateCall = async (req, res) => {
       sessionId: session._id.toString(),
       type: 'call_invitation',
       callerName: req.user.firstName || '',
-      callerRole: callerRole
+      callerRole: callerRole,
+      token
     });
 
     // Create notification record
@@ -193,7 +197,8 @@ const initiateCall = async (req, res) => {
         receiver: {
           name: receiver.firstName,
           role: receiver.role
-        }
+        },
+        token
       }
     });
 
