@@ -104,7 +104,6 @@ const generateAgoraToken = (channelName, uid) => {
       channelName,
       uid,
       RtcRole.PUBLISHER,
-      privilegeExpiredTs,
       privilegeExpiredTs
     );
 
