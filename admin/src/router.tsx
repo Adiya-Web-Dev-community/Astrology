@@ -80,12 +80,12 @@ const router = createBrowserRouter([
         },
         errorElement: <GeneralError />,
         children: [
-          {
-            index: true,
-            lazy: async () => ({
-              Component: (await import("./pages/dashboard")).default,
-            }),
-          },
+          // {
+          //   index: false,
+          //   lazy: async () => ({
+          //     Component: (await import("./pages/dashboard")).default,
+          //   }),
+          // },
           {
             path: "tasks",
             lazy: async () => ({
@@ -105,6 +105,7 @@ const router = createBrowserRouter([
             }),
           },
           {
+            index: true,
             path: "users",
             lazy: async () => ({
               Component: (await import("@/components/users/users")).default,

@@ -1,199 +1,3 @@
-// const admin = require('firebase-admin');
-// const Session = require('../models/sessionModel');
-// const User = require('../models/userModel');
-// const Notification = require('../models/notificationModel');
-
-// // Generate unique call credentials
-// const generateCallCredentials = () => {
-//   return {
-//     channelName: `channel_${Date.now()}`,
-//     uid: `uid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-//   };
-// };
-
-// // Initiate a call
-// const initiateCall = async (req, res) => {
-//   try {
-//     const { astrologerId, clientId, callType } = req.body;
-
-//     if (!['video', 'voice'].includes(callType)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Invalid call type. Must be either video or voice'
-//       });
-//     }
-
-//     // Generate call credentials
-//     const credentials = generateCallCredentials();
-
-//     // Create session record
-//     const session = await Session.create({
-//       sessionType: callType === 'video' ? 'videoCall' : 'audioCall',
-//       astrologerId,
-//       clientId,
-//       startTime: new Date(),
-//       status: 'ongoing'
-//     });
-
-//     // Get receiver's FCM token
-//     const receiver = await User.findById(astrologerId);
-//     if (!receiver?.fcm) {
-//       throw new Error('Receiver FCM token not found');
-//     }
-
-//     // Prepare and send FCM notification
-//     const notificationPayload = {
-//       notification: {
-//         title: `Incoming ${callType} Call`,
-//         body: 'calling...'
-//       },
-//       data: {
-//         channelName: credentials.channelName,
-//         uid: credentials.uid,
-//         callType,
-//         sessionId: session._id.toString(),
-//         type: 'call_invitation'
-//       }
-//     };
-
-//     await admin.messaging().sendToDevice(receiver.fcm, notificationPayload);
-
-//     // Create notification record
-//     await Notification.create({
-//       userId: astrologerId,
-//       title: `Incoming ${callType} Call`,
-//       message: 'Someone is calling you',
-//       metadata: {
-//         sessionId: session._id
-//       }
-//     });
-
-//     res.status(200).json({
-//       success: true,
-//       data: {
-//         ...credentials,
-//         callType,
-//         sessionId: session._id
-//       }
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message
-//     });
-//   }
-// };
-
-// // End a call
-// const endCall = async (req, res) => {
-//   try {
-//     const { sessionId, duration } = req.body;
-
-//     const session = await Session.findById(sessionId);
-//     if (!session) {
-//       throw new Error('Session not found');
-//     }
-
-//     // Update session
-//     await Session.findByIdAndUpdate(sessionId, {
-//       status: 'completed',
-//       endTime: new Date(),
-//       duration
-//     });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Call ended successfully'
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message
-//     });
-//   }
-// };
-
-// // Handle missed call
-// const handleMissedCall = async (req, res) => {
-//   try {
-//     const { sessionId } = req.body;
-
-//     await Session.findByIdAndUpdate(sessionId, {
-//       status: 'missed'
-//     });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Missed call handled successfully'
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message
-//     });
-//   }
-// };
-
-// module.exports = {
-//   initiateCall,
-//   endCall,
-//   handleMissedCall
-// };
-
-//================================================================
-
-// // Validation helpers
-// const validateCallRequest = ({ astrologerId, clientId, callType }) => {
-//   const errors = [];
-//   if (!astrologerId) errors.push('Astrologer ID is required');
-//   if (!clientId) errors.push('Client ID is required');
-//   if (!['video', 'voice'].includes(callType)) errors.push('Call type must be either video or voice');
-//   return errors;
-// };
-
-// // Generate unique call credentials
-// const generateCallCredentials = () => {
-//   const timestamp = Date.now();
-//   const randomString = Math.random().toString(36).substring(2, 15);
-  
-//   return {
-//     channelName: `channel_${timestamp}`,
-//     uid: `uid_${timestamp}_${randomString}`,
-//     timestamp
-//   };
-// };
-
-// // Check astrologer availability
-// const checkAstrologerAvailability = async (astrologerId) => {
-//   const astrologer = await User.findOne({ 
-//     _id: astrologerId,
-//     role: 'astrologer',
-//     online: true
-//   });
-
-//   if (!astrologer) {
-//     throw new Error('Astrologer is currently unavailable');
-//   }
-
-//   // Check if astrologer is already in a call
-//   const activeSession = await Session.findOne({
-//     astrologerId,
-//     status: 'ongoing',
-//     endTime: null
-//   });
-
-//   if (activeSession) {
-//     throw new Error('Astrologer is currently in another call');
-//   }
-
-//   return astrologer;
-// };
-
-
-//================================================================
 const admin = require('firebase-admin');
 const notificationService = require('../helpers/notificationService');
 const Session = require('../models/sessionModel');
@@ -217,12 +21,11 @@ const sendFCMNotification = async (fcmToken, payload, retryCount = 3) => {
   }
 };
 
+
 // Initiate a call
 const initiateCall = async (req, res) => {
   try {
     const { receiverId, callType } = req.body;
-    
-    // Get caller's info from token
     const callerId = req.user._id;
     const callerRole = req.user.role;
 
@@ -242,9 +45,8 @@ const initiateCall = async (req, res) => {
       clientId = callerId;
       astrologerId = receiverId;
       
-      // Verify receiver is an astrologer and check availability
       astrologer = await Astrologer.findOne({ 
-        _id: receiverId,
+        userId: receiverId,
         isAvailable: true
       });
       
@@ -255,7 +57,6 @@ const initiateCall = async (req, res) => {
         });
       }
 
-      // Check if call type is enabled for astrologer
       if (callType === 'video' && !astrologer.isCallEnabled) {
         return res.status(400).json({
           success: false,
@@ -274,7 +75,6 @@ const initiateCall = async (req, res) => {
       astrologerId = callerId;
       clientId = receiverId;
       
-      // Verify receiver is a customer
       const customer = await User.findOne({ 
         _id: receiverId, 
         role: 'customer' 
@@ -287,7 +87,6 @@ const initiateCall = async (req, res) => {
         });
       }
 
-      // Get astrologer details
       astrologer = await Astrologer.findOne({ _id: callerId });
     } else {
       return res.status(403).json({
@@ -296,32 +95,51 @@ const initiateCall = async (req, res) => {
       });
     }
 
-    // Check if caller has active call
-    const activeCallerSession = await Session.findOne({
+    // Check for active calls with proper error handling
+    let activeCallerSession = await Session.findOne({
       $or: [
         { clientId: callerId },
         { astrologerId: callerId }
       ],
       status: 'ongoing',
       endTime: null
-    });
+    }).lean();
 
-    if (activeCallerSession) {
-      return res.status(400).json({
-        success: false,
-        message: 'You already have an active call'
-      });
-    }
-
-    // Check if receiver has active call
-    const activeReceiverSession = await Session.findOne({
+    let activeReceiverSession = await Session.findOne({
       $or: [
         { clientId: receiverId },
         { astrologerId: receiverId }
       ],
       status: 'ongoing',
       endTime: null
-    });
+    }).lean();
+
+    // Auto-end any stale sessions that are more than 2 hours old
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    
+    if (activeCallerSession && activeCallerSession.startTime < twoHoursAgo) {
+      await Session.findByIdAndUpdate(activeCallerSession._id, {
+        status: 'completed',
+        endTime: new Date()
+      });
+      activeCallerSession = null;
+    }
+
+    if (activeReceiverSession && activeReceiverSession.startTime < twoHoursAgo) {
+      await Session.findByIdAndUpdate(activeReceiverSession._id, {
+        status: 'completed',
+        endTime: new Date()
+      });
+      activeReceiverSession = null;
+    }
+
+    // Now check for active sessions after cleaning up stale ones
+    if (activeCallerSession) {
+      return res.status(400).json({
+        success: false,
+        message: 'You already have an active call'
+      });
+    }
 
     if (activeReceiverSession) {
       return res.status(400).json({
@@ -342,15 +160,16 @@ const initiateCall = async (req, res) => {
       astrologerId,
       clientId,
       startTime: new Date(),
-      status: 'ongoing',
-      // chargePerMinute: callType === 'video' ? 
-      //   astrologer.callChargePerMinute : 
-      //   astrologer.chatChargePerMinute
+      status: 'ongoing'
     });
 
     // Get receiver's FCM token
     const receiver = await User.findById(receiverId);
     if (!receiver?.fcm) {
+      await Session.findByIdAndUpdate(session._id, { 
+        status: 'failed',
+        endTime: new Date()
+      });
       return res.status(400).json({
         success: false,
         message: 'Receiver is not available for calls'
@@ -358,28 +177,8 @@ const initiateCall = async (req, res) => {
     }
 
     // Send FCM notification
-    const notificationPayload = {
-      notification: {
-        title: `Incoming ${callType} Call`,
-        body: `${req.user.firstName || 'Someone'} is calling you`
-      },
-      data: {
-        channelName: credentials.channelName,
-        uid: credentials.uid,
-        callType,
-        sessionId: session._id.toString(),
-        type: 'call_invitation',
-        callerName: req.user.firstName || '',
-        callerRole: callerRole,
-        // chargePerMinute: callType === 'video' ? 
-        //   astrologer?.callChargePerMinute.toString() : 
-        //   astrologer?.chatChargePerMinute.toString()
-      }
-    };
-
-     // Send FCM notification
-     const title = `Incoming ${callType} Call`;
-     const message = `${req.user.firstName || 'Someone'} is calling you`;
+    const title = `Incoming ${callType} Call`;
+    const message = `${req.user.firstName || 'Someone'} is calling you`;
 
     await notificationService.sendMessage(title, message, receiver.fcm, {
       channelName: credentials.channelName,
@@ -410,14 +209,12 @@ const initiateCall = async (req, res) => {
         receiver: {
           name: receiver.firstName,
           role: receiver.role
-        },
-        // chargePerMinute: callType === 'video' ? 
-        //   astrologer.callChargePerMinute : 
-        //   astrologer.chatChargePerMinute
+        }
       }
     });
 
   } catch (error) {
+    console.error('Call initiation error:', error);
     res.status(500).json({
       success: false,
       message: error.message || 'Failed to initiate call'
@@ -451,10 +248,13 @@ const endCall = async (req, res) => {
         message: 'Call is not ongoing'
       });
     }
+const astrologer = await Astrologer.findOne({userId:session.astrologerId});
+console.log(astrologer.callChargePerMinute);
 
     // Calculate call charges
     const callDuration = duration || Math.ceil((Date.now() - session.startTime) / 60000); // in minutes
-    const totalCharge = callDuration * session.chargePerMinute;
+    const totalCharge = callDuration * astrologer.callChargePerMinute;
+console.log(totalCharge);
 
     // Update session
     session.status = 'completed';

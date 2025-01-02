@@ -600,3 +600,32 @@ exports.updateAstrologerProfile = async (req, res, next) => {
     });
   }
 };
+
+
+// Get user details by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params; // Extract userId from the request parameters
+
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required." });
+    }
+
+    // Find user by ID
+    const user = await User.findById(userId)
+      .select("-password -otp.code") // Exclude sensitive fields like password and OTP
+      .populate("favoriteAstrologer", "name") // Populate favorite astrologer details (name only)
+      .populate("activePlan.planId", "name description"); // Populate active plan details (optional fields)
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};
