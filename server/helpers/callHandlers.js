@@ -137,7 +137,7 @@ const initiateCall = async (req, res) => {
     // Generate call credentials
     const credentials = {
       channelName: `channel_${Date.now()}`,
-      uid: `uid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      uid: Math.floor(Math.random() * 100000),
     };
 // Generate Agora token
 const token = generateAgoraToken(credentials.channelName, credentials.uid);
