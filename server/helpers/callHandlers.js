@@ -6,22 +6,6 @@ const Notification = require('../models/notificationModel');
 const CallHistory = require('../models/CallHistory');
 const Astrologer = require('../models/astrologerModel');
 
-
-
-// Send FCM notification with retry
-const sendFCMNotification = async (fcmToken, payload, retryCount = 3) => {
-  for (let i = 0; i < retryCount; i++) {
-    try {
-      const response = await admin.messaging().sendToDevice(fcmToken, payload);
-      return response;
-    } catch (error) {
-      if (i === retryCount - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
-    }
-  }
-};
-
-
 // Initiate a call
 const initiateCall = async (req, res) => {
   try {
